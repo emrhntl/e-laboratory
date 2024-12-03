@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile-odev",
-    "slug": "mobile-odev",
+    "name": "e-laboratory",
+    "slug": "e-laboratory",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
