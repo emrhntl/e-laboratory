@@ -8,8 +8,10 @@ const Splash = () => {
   const logo = require("../assets/images/logo.png");
 
   useEffect(() => {
-
-  }, [router]);
+    setTimeout(() => {
+      router.push("/login");
+    },1500)
+  }, []);
 
   return (
     <View style={styles.container}>

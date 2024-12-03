@@ -1,44 +1,51 @@
-
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Link, Stack } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/constants/firebaseConfig'; // Firebase konfigürasyon dosyasını içe aktar
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (email === '' || password === '') {
       Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
     } else {
-      Alert.alert('Başarılı', 'Giriş başarılı!');
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        Alert.alert('Başarılı', `Hoş geldiniz ${userCredential.user.email}!`);
+        console.log(userCredential);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
   return (
     <>
-    <Stack.Screen options={{ title: 'Login!' }} />
-    <View style={styles.container}>
-      <Text style={styles.title}>Giriş Yap</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="E-posta"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Şifre"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Giriş Yap</Text>
-      </TouchableOpacity>
-    </View>
+      <Stack.Screen options={{ title: 'Login!' }} />
+      <View style={styles.container}>
+        <Text style={styles.title}>Giriş Yap</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="E-posta"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Şifre"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Giriş Yap</Text>
+        </TouchableOpacity>
+      </View>
     </>
   );
 };
