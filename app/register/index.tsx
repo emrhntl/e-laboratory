@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, Alert, SafeAreaView, Image, TouchableOpacity } from 'react-native';
-import { Link, Stack, useRouter } from 'expo-router';
+import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView, Image } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/constants/firebaseConfig'; // Firebase konfigürasyon dosyasını içe aktar
 import styles from './index.style';
 import Input from '../../components/Input/input';
 import Button from '@/components/Button/button';
 
-const Login = () => {
+const Register = () => {
   const router = useRouter();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     if (email === '' || password === '') {
@@ -28,18 +29,42 @@ const Login = () => {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Login!' }} />
+      <Stack.Screen options={{ title: 'Register!' }} />
       <SafeAreaView style={styles.container}>
         <View style={styles.imageContainer}>
-          <Image source={require("../../assets/images/logo.png")} style={styles.image} />
+          <Image source={require("../../assets/images/logo.png")} style={styles.image}/>
         </View>
         <View style={styles.innerContainer}>
-          <Text style={styles.title}>Giriş Yap</Text>
+          <Text style={styles.title}>Kayıt Ol</Text>
           <Input
-            placeholder="E-posta"
+            placeholder="Adınız"
+            value={email}
+            onChangeText={setEmail}
+            iconName="person-outline"
+          />
+          <Input
+            placeholder="Soyadınız"
+            value={email}
+            onChangeText={setEmail}
+            iconName="person-outline"
+          />
+          <Input
+            placeholder="E-posta adresiniz"
             value={email}
             onChangeText={setEmail}
             iconName="mail-outline"
+          />
+          <Input
+            placeholder="T.C. Kimlik Numaranız"
+            value={email}
+            onChangeText={setEmail}
+            iconName="id-card-outline"
+          />
+          <Input   //Bu doğum tarihi olduğu için değişecek
+            placeholder="Doğum Tarihiniz"
+            value={email}
+            onChangeText={setEmail}
+            iconName="calendar-outline"
           />
           <Input
             placeholder="Şifre"
@@ -49,26 +74,18 @@ const Login = () => {
             secureTextEntry
           />
           <Button
-            title="Giriş Yap"
+            title="Kayıt Ol"
             onPress={handleLogin}
             style={styles.loginButton}
             textStyle={styles.loginButtonText}
           />
           <Text style={{ marginVertical: 8 }}>
-            Hesabınız yok mu?
-            <Text style={styles.linkText} onPress={()=>router.push("/register") }>Kayıt Olun.</Text>
-
+            Hesabınız var mı? <Text style={styles.linkText} onPress={() => router.push("/login") }>Giriş Yapın.</Text>
           </Text>
-          {/* <Button
-            title="Admin Girişi"
-            onPress={() => Alert.alert('Admin Girişi')}
-            style={styles.adminButton}
-            textStyle={styles.adminButtonText}
-          /> */}
         </View>
       </SafeAreaView>
     </>
   );
 };
 
-export default Login;
+export default Register;

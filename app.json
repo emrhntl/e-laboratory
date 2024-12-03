@@ -13,14 +13,23 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.elaboratory"
     },
     "web": {
       "bundler": "metro",
       "output": "static"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./node_modules/@react-native-vector-icons/fonts/Ionicons.ttf"
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
