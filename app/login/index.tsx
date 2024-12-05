@@ -6,6 +6,7 @@ import { auth } from '@/constants/firebaseConfig'; // Firebase konfigürasyon do
 import styles from './index.style';
 import Input from '../../components/Input/input';
 import Button from '@/components/Button/button';
+import { userListManager } from '@/constants/StoreList';
 
 const Login = () => {
   const router = useRouter();
@@ -18,7 +19,9 @@ const Login = () => {
     } else {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = await userListManager.getById(userCredential.user.uid);
         Alert.alert('Başarılı', `Hoş geldiniz ${userCredential.user.email}!`);
+        Alert.alert("UYARI",user?.birthday)
         console.log(userCredential);
       } catch (error) {
         console.log(error);
