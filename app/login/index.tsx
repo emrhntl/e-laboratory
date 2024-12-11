@@ -7,6 +7,8 @@ import styles from './index.style';
 import Input from '../../components/Input/input';
 import Button from '@/components/Button/button';
 import { userService } from '@/services/service.list';
+import User from '@/entity/user';
+import RoleEnum from '@/enums/role.enum';
 
 const Login = () => {
   const router = useRouter();
@@ -19,9 +21,26 @@ const Login = () => {
     } else {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = await userService.getById(userCredential.user.uid);
+        const user: User | null = await userService.getById(userCredential.user.uid);
+        user?.write();
+        if (user != null) {
+          switch (user.role) {
+            case RoleEnum.User:
+              break;
+            case RoleEnum.SuperUser:
+              router.navigate("/admin")
+              break;
+            case RoleEnum.Officer:
+              router.navigate("/admin")
+              break;
+            default:
+              console.log("Kullanıcı Rolü Bulunamadı");
+              break;
+          }
+        }
         Alert.alert('Başarılı', `Hoş geldiniz ${userCredential.user.email}!`);
         console.log(userCredential);
+        router.navigate("/admin")
       } catch (error) {
         console.log(error);
       }
@@ -58,7 +77,7 @@ const Login = () => {
           />
           <Text style={{ marginVertical: 8 }}>
             Hesabınız yok mu?
-            <Text style={styles.linkText} onPress={()=>router.push("/register") }>Kayıt Olun.</Text>
+            <Text style={styles.linkText} onPress={() => router.push("/register")}>Kayıt Olun.</Text>
 
           </Text>
           {/* <Button

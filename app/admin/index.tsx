@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView} from 'react-native';
+import styles from './index.style';
+import { useRouter } from 'expo-router';
 
-const AdminAddGuide = () => {
+const Admin = () => {
+  const router = useRouter();
   const [testName, setTestName] = useState('');
   const [valueRange, setValueRange] = useState('');
   const [guideName, setGuideName] = useState('');
@@ -9,7 +12,7 @@ const AdminAddGuide = () => {
 
   const addTest = () => {
     if (testName && valueRange) {
-      setTests([...tests, { testName, valueRange }]);
+      // setTests([...tests, { testName, valueRange }]);
       setTestName('');
       setValueRange('');
     }
@@ -63,8 +66,8 @@ const AdminAddGuide = () => {
 
         {tests.map((test, index) => (
           <View key={index} style={styles.testItem}>
-            <Text style={styles.testText}>Tetkik Adı: {test.testName}</Text>
-            <Text style={styles.testText}>Değer Aralığı: {test.valueRange}</Text>
+            {/* <Text style={styles.testText}>Tetkik Adı: {test.testName}</Text> */}
+            {/* <Text style={styles.testText}>Değer Aralığı: {test.valueRange}</Text> */}
           </View>
         ))}
 
@@ -76,4 +79,4 @@ const AdminAddGuide = () => {
   );
 };
 
-export default AdminAddGuide;
+export default Admin;
