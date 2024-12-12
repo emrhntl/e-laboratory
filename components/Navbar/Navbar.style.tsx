@@ -11,7 +11,6 @@ export default StyleSheet.create({
         paddingHorizontal: 10,
         borderBottomEndRadius: 25,
         borderBottomStartRadius: 25,
-        marginBottom: 10,
     },
     headerText: {
         textAlign: "center",
