@@ -21,6 +21,7 @@ const Login = () => {
     } else {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
         const user: User | null = await userService.getById(userCredential.user.uid);
         user?.write();
         if (user != null) {
@@ -39,8 +40,6 @@ const Login = () => {
           }
         }
         Alert.alert('Başarılı', `Hoş geldiniz ${userCredential.user.email}!`);
-        console.log(userCredential);
-        router.navigate("/admin")
       } catch (error) {
         console.log(error);
       }
