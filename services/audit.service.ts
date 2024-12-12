@@ -2,18 +2,18 @@ import FirestoreManager from "@/constants/firestoreManager";
 import Analysis from "@/entity/analysis";
 import { Collections } from "@/enums/collections.enum";
 
-export default class AnalysisService extends FirestoreManager<Analysis> {
+export default class AuditService extends FirestoreManager<Analysis> {
 
-    private static instance: AnalysisService;
+    private static instance: AuditService;
 
     constructor() {
         super(Collections.AuditList);
     }
 
-    public static getInstance(): AnalysisService {
-        if (!AnalysisService.instance) {
-            AnalysisService.instance = new AnalysisService();
+    public static getInstance(): AuditService {
+        if (!AuditService.instance) {
+            AuditService.instance = new AuditService();
         }
-        return AnalysisService.instance;
+        return AuditService.instance;
     }
 }
