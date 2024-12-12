@@ -1,87 +1,125 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-    container: {
-      flexGrow: 1,
-      padding: 20,
-      backgroundColor: '#E0F5F7',
-    },
-    header: {
-      backgroundColor: '#6AB2B8',
-      padding: 15,
-      borderRadius: 10,
-      marginBottom: 20,
-      alignItems: 'center',
-    },
-    headerText: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: 'white',
-    },
-    navbar: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 20,
-    },
-    navButton: {
-      flex: 1,
-      padding: 10,
-      marginHorizontal: 5,
-      borderRadius: 10,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-    },
-    selectedButton: {
-      backgroundColor: '#A4D4D9',
-    },
-    navButtonText: {
-      fontSize: 16,
-      fontWeight: 'bold',
-    },
-    formContainer: {
-      backgroundColor: '#6AB2B8',
-      padding: 15,
-      borderRadius: 10,
-    },
-    label: {
-      fontSize: 16,
-      color: 'white',
-      marginBottom: 5,
-    },
-    input: {
-      backgroundColor: '#fff',
-      padding: 10,
-      borderRadius: 10,
-      marginBottom: 15,
-    },
-    addButton: {
-      backgroundColor: '#A4D4D9',
-      padding: 10,
-      borderRadius: 10,
-      alignItems: 'center',
-      marginBottom: 15,
-    },
-    createButton: {
-      backgroundColor: '#4CAF50',
-      padding: 15,
-      borderRadius: 10,
-      alignItems: 'center',
-    },
-    buttonText: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: 'white',
-    },
-    testItem: {
-      backgroundColor: '#fff',
-      padding: 10,
-      borderRadius: 10,
-      marginBottom: 10,
-    },
-    testText: {
-      fontSize: 14,
-      fontWeight: 'bold',
-      color: '#333',
-    },
-  });
-  
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  row: {
+    flexDirection: 'row',
+    marginBottom: 3,
+  },
+  baseButton: {
+    flex: 1,
+    margin: 3,
+    padding: 20,
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    opacity: 0.5,
+    borderWidth: 0.2,
+  },
+  baseButtonText: {
+    color: '#222',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  btn1: {
+    borderBottomLeftRadius: 25,
+    borderTopRightRadius: 25,
+    borderTopLeftRadius: 25
+  },
+  btn2: {
+    borderBottomRightRadius: 25,
+    borderTopRightRadius: 25,
+    borderTopLeftRadius: 25
+  },
+  btn3: {
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+    borderTopLeftRadius: 25
+  },
+  btn4: {
+    borderBottomLeftRadius: 25,
+    borderTopRightRadius: 25,
+    borderBottomRightRadius: 25
+  },
+  selectText: {
+    color: '#fff'
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 15
+  },
+  selectedButton: {
+    backgroundColor: '#5C98A4',
+    opacity: 1,
+  },
+  formContainer: {
+    flex: 3,
+    marginHorizontal: 20,
+    marginBottom: 10,
+    backgroundColor: '#f5f5f5',
+    padding: 20,
+    borderRadius: 25,
+  },
+  dropdownContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20
+  },
+  unitText: {
+    color: '#444', marginRight: 6, marginLeft: 2, fontSize: 16
+  },
+  separator: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginHorizontal: 10,
+  },
+  label: {
+    fontSize: 16,
+    color: 'white',
+    marginBottom: 5,
+  },
+  input: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  addButton: {
+    backgroundColor: '#A4D4D9',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  createButton: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  testItem: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  testText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+
+
+
+
+});
