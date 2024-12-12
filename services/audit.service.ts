@@ -1,8 +1,8 @@
 import FirestoreManager from "@/constants/firestoreManager";
-import Analysis from "@/entity/analysis";
+import Audit from "@/entity/audit";
 import { Collections } from "@/enums/collections.enum";
 
-export default class AuditService extends FirestoreManager<Analysis> {
+export default class AuditService extends FirestoreManager<Audit> {
 
     private static instance: AuditService;
 

@@ -1,8 +1,8 @@
 import FirestoreManager from "@/constants/firestoreManager";
-import Analysis from "@/entity/analysis";
+import Guide from "@/entity/guide";
 import { Collections } from "@/enums/collections.enum";
 
-export default class GuideService extends FirestoreManager<Analysis> {
+export default class GuideService extends FirestoreManager<Guide> {
 
     private static instance: GuideService;
 
