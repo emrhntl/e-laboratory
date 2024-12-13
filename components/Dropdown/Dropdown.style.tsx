@@ -10,7 +10,7 @@ export default StyleSheet.create({
       borderWidth: 1,
       borderRadius: 25,
       borderColor: '#ccc',
-      paddingVertical: 10,
+      paddingVertical: 5,
       paddingHorizontal: 12,
       backgroundColor: '#f9f9f9',
     },
@@ -37,5 +37,8 @@ export default StyleSheet.create({
         marginTop: 5,
         maxHeight: 150, 
         overflow: 'scroll',
-      }
+      },
+      scrollView: {
+        maxHeight: 150,
+      },
   });

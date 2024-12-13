@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: {
@@ -71,12 +71,11 @@ export default StyleSheet.create({
     marginBottom: 20
   },
   unitText: {
-    color: '#444', marginRight: 6, marginLeft: 2, fontSize: 16
+    color: '#444', 
+    fontSize: 16
   },
   separator: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginHorizontal: 10,
   },
   label: {
     fontSize: 16,
@@ -90,11 +89,11 @@ export default StyleSheet.create({
     marginBottom: 15,
   },
   addButton: {
-    backgroundColor: '#A4D4D9',
-    padding: 10,
-    borderRadius: 10,
+    backgroundColor: '#fff',
+    padding:10,
+    width: '60%',
+    borderRadius: 25,
     alignItems: 'center',
-    marginBottom: 15,
   },
   createButton: {
     backgroundColor: '#fff',
@@ -105,7 +104,7 @@ export default StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'gray',
   },
   testItem: {
     backgroundColor: '#fff',
@@ -118,7 +117,26 @@ export default StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
-
+  addContainer: {
+    backgroundColor: '#5C98A4',
+    width: '100%',
+    height: Dimensions.get('window').height/4,
+    padding: 10,
+    borderRadius: 25, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+  },
+  listContainer: {
+    backgroundColor: '#fff',
+    width: '100%',
+    height: Dimensions.get('window').height/4,
+    padding: 10,
+    marginTop: 10,
+    borderRadius: 25, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+  }
+  
 
 
 
