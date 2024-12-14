@@ -8,7 +8,7 @@ import Input from '../../components/Input/input';
 import Button from '@/components/Button/button';
 import { userService } from '@/services/service.list';
 import User from '@/entity/user';
-import RoleEnum from '@/enums/role.enum';
+import {RoleEnum} from '@/enums/role.enum';
 
 const Login = () => {
   const router = useRouter();
@@ -23,16 +23,12 @@ const Login = () => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
         const user: User | null = await userService.getById(userCredential.user.uid);
-        user?.write();
         if (user != null) {
           switch (user.role) {
-            case RoleEnum.User:
+            case RoleEnum.USER:
               break;
-            case RoleEnum.SuperUser:
-              router.navigate("/admin")
-              break;
-            case RoleEnum.Officer:
-              router.navigate("/admin")
+            case RoleEnum.ADMIN:
+              router.navigate("/admin/CreateGuide")
               break;
             default:
               console.log("Kullanıcı Rolü Bulunamadı");

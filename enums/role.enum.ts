@@ -1,7 +1,5 @@
-enum RoleEnum {
-    SuperUser,
-    User,
-    Officer
-}
-
-export default RoleEnum;
+export enum RoleEnum {
+    ADMIN = 'Admin',
+    USER = 'User'
+  }
+  
