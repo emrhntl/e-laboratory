@@ -1,18 +1,20 @@
+import AuditEntity from "./audit.entity";
 import {BaseEntity} from "./base.entity";
 
 export default class Guide extends BaseEntity {
-    id: string;
     name: string;
-    auditIdList: string[];
+    descricption: string;
+    auditList: AuditEntity[];
 
     constructor(
         id: string,
         name: string,
-        auditIdList: string[]
+        description:string,
+        auditList:AuditEntity[],
     ) {
-        super();
-        this.id = id;
+        super(id);
         this.name = name;
-        this.auditIdList = auditIdList;
+        this.descricption = description;
+        this.auditList = auditList;
     }
 }

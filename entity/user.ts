@@ -1,15 +1,14 @@
-import Role from '../enums/role.enum'
+import { RoleEnum } from '@/enums/role.enum'; '../enums/role.enum'
 import { BaseEntity } from './base.entity';
 
 class User extends BaseEntity{
-    id: string;
     name: string;
     surname: string;
     tckn: string;
     birthday: string;
     password: string;
     email: string;
-    role: Role
+    role: RoleEnum
 
     constructor(
         id: string,
@@ -19,10 +18,9 @@ class User extends BaseEntity{
         birthday: string,
         password: string,
         email: string,
-        role: Role
+        role: RoleEnum
     ) {
-        super();
-        this.id = id;
+        super(id);
         this.name = name;
         this.surname = surname;
         this.tckn = tckn;

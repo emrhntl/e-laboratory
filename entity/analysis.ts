@@ -2,7 +2,6 @@ import AnalysisValue from "./analysisValue";
 import { BaseEntity } from "./base.entity";
 
 export default class Analysis extends BaseEntity{
-    analysisId: string;
     userId: string;
     guideId: string;
     values: AnalysisValue;
@@ -13,8 +12,7 @@ export default class Analysis extends BaseEntity{
         guideId: string,
         values: AnalysisValue
     ) {
-        super();
-        this.analysisId = analysisId;
+        super(analysisId);
         this.userId = userId;
         this.guideId = guideId;
         this.values = values;

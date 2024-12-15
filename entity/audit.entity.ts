@@ -1,24 +1,19 @@
-import {UnitEnum} from "@/enums/unit.enum";
-import Audit from "./audit";
-import {BaseEntity} from "./base.entity";
+import { UnitEnum } from "@/enums/unit.enum";
+import AuditValues from "./audit.values";
 
-class AuditEntity extends BaseEntity {
-    id: string;
+class AuditEntity {
     auditName: string;
-    valueRanges: Audit[];
     unit: UnitEnum;
+    valueRanges: AuditValues[];
 
     constructor(
-        id: string,
         auditName: string,
-        valueRanges: Audit[],
-        unit: UnitEnum
+        unit: UnitEnum,
+        valueRanges: AuditValues[],
     ) {
-        super();
-        this.id = id;
         this.auditName = auditName;
-        this.valueRanges = valueRanges;
         this.unit = unit;
+        this.valueRanges = valueRanges
     }
 }
 export default AuditEntity;

@@ -7,12 +7,12 @@ export default StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 3,
+    marginBottom: '1.5%',
   },
   baseButton: {
     flex: 1,
-    margin: 3,
-    padding: 20,
+    margin: '1.5%',
+    padding: '6%',
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
     opacity: 0.5,
