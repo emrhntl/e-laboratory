@@ -1,6 +1,5 @@
 import { RoleEnum } from '@/enums/role.enum'; '../enums/role.enum'
 import { BaseEntity } from './base.entity';
-
 class User extends BaseEntity{
     name: string;
     surname: string;

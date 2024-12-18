@@ -7,15 +7,17 @@ import { auth, db } from '@/constants/firebaseConfig';
 import styles from './index.style';
 import Input from '../../components/Input/input';
 import Button from '@/components/Button/button';
+import { RoleEnum } from '@/enums/role.enum';
 
 const Register = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
   const [tckn, setTckn] = useState('');
   const [birthday, setBirthday] = useState('');
-  const [role, setRole] = useState('User');
+  const [role, setRole] = useState(RoleEnum.USER);
 
   const handleRegister = async () => {
     if (!email || !password || !name || !tckn || !birthday) {
@@ -31,6 +33,7 @@ const Register = () => {
         userId: user.uid,
         email: email,
         name: name,
+        surname: surname,
         tckn: tckn,
         birthday: birthday,
         role: role,
@@ -52,9 +55,15 @@ const Register = () => {
         <View style={styles.innerContainer}>
           <Text style={styles.title}>Kayıt Ol</Text>
           <Input
-            placeholder="Adınız ve Soyadınız"
+            placeholder="Adınız"
             value={name}
             onChangeText={setName}
+            iconName="person-outline"
+          />
+          <Input
+            placeholder="Soyadınız"
+            value={name}
+            onChangeText={setSurname}
             iconName="person-outline"
           />
           <Input
