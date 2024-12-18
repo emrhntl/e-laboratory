@@ -1,44 +1,54 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
+
 export default StyleSheet.create({
     dropdownContainer: {
-      flex: 1,
-      margin: 3,
+        width: 120,
+        zIndex: 1000,
     },
     dropdown: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      borderWidth: 1,
-      borderRadius: 25,
-      borderColor: '#ccc',
-      paddingVertical: 5,
-      paddingHorizontal: 12,
-      backgroundColor: '#f9f9f9',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderWidth: 1,
+        borderRadius: 20,
+        borderColor: '#ccc',
+        paddingVertical: 6,
+        paddingHorizontal: 12,
+        backgroundColor: '#FFF',
     },
     selectedValue: {
-      flex: 1,
-      fontSize: 16,
-      color: '#aaa'
+        fontSize: 14,
+        color: '#555',
+        flex: 1,
     },
-    option: {
-        paddingVertical: 8,
-        paddingHorizontal: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-      },
-      optionText: {
-        fontSize: 16,
-        color: '#aaa'
-      },
-      optionsContainer:{
-        backgroundColor: '#f9f9f9',
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: 200,
+        maxHeight: 200,
+        backgroundColor: '#FFF',
+        borderRadius: 12,
         borderWidth: 1,
         borderColor: '#ccc',
-        borderRadius: 25,
-        marginTop: 5,
-        maxHeight: 150, 
-        overflow: 'scroll',
-      },
-      scrollView: {
-        maxHeight: 150,
-      },
-  });
+        overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    option: {
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
+    },
+    optionText: {
+        fontSize: 14,
+        color: '#333',
+    },
+});
