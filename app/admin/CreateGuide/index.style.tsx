@@ -57,11 +57,9 @@ export default StyleSheet.create({
     opacity: 1,
   },
   formContainer: {
-    flex: 3,
+    flex: 3.25,
     marginHorizontal: 20,
-    marginBottom: 10,
     backgroundColor: '#f5f5f5',
-    padding: 20,
     borderRadius: 25,
   },
   dropdownContainer: {
@@ -69,10 +67,10 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 20,
-    maxHeight: Dimensions.get('window').height/4
+    maxHeight: Dimensions.get('window').height / 4
   },
   unitText: {
-    color: '#444', 
+    color: '#444',
     fontSize: 16
   },
   separator: {
@@ -91,7 +89,7 @@ export default StyleSheet.create({
   },
   addButton: {
     backgroundColor: '#fff',
-    padding:10,
+    padding: 10,
     width: '60%',
     borderRadius: 25,
     alignItems: 'center',
@@ -121,23 +119,23 @@ export default StyleSheet.create({
   addContainer: {
     backgroundColor: '#5C98A4',
     width: '100%',
-    height: Dimensions.get('window').height/4,
+    height: Dimensions.get('window').height / 4,
     padding: 10,
-    borderRadius: 25, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   listContainer: {
     backgroundColor: '#fff',
     width: '100%',
-    height: Dimensions.get('window').height/4,
+    height: Dimensions.get('window').height / 4,
     padding: 10,
     marginTop: 10,
-    borderRadius: 25, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
   }
-  
+
 
 
 

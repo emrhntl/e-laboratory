@@ -14,9 +14,8 @@ const CreateGuide: React.FC = () => {
 
 
   const router = useRouter();
-  const currentPath = usePathname();
 
-  
+
   const [guideName, setGuideName] = useState('');
   const [testName, setTestName] = useState('');
   const [ageRange, setAgeRange] = useState('');
@@ -58,7 +57,7 @@ const CreateGuide: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <Navbar />
 
-        <AdminTabs router={router}/>
+        <AdminTabs router={router} />
 
         <View style={styles.formContainer}>
           {/* <SearchBar value={searchText} onChange={setSearchText} iconName={"search-outline"} placeholder={"Kılavuz Arayın..."} /> */}

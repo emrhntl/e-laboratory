@@ -1,18 +1,19 @@
-import { UnitEnum } from "@/enums/unit.enum";
 import { BaseEntity } from "./base.entity";
 
 class Audit extends BaseEntity {
-    auditName: string;
-    unit: UnitEnum;
+    name: string;
+    unit: any;
 
     constructor(
-        id:string,
-        auditName: string,
-        unit: UnitEnum,
+        id: string,
+        name: string,
+        unit: any,
     ) {
         super(id);
-        this.auditName = auditName;
+        this.name = name;
         this.unit = unit;
     }
+
 }
+
 export default Audit;

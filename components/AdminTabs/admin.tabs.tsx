@@ -22,7 +22,7 @@ const AdminTabs: React.FC<AdminTabsProps> = ({ router }) => {
     ];
 
     const handleNavigation = (path: string) => {
-        if (currentPath !== path) router.push(path);
+        if (currentPath !== path) router.replace(path);
     };
 
     return (

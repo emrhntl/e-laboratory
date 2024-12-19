@@ -13,14 +13,16 @@ import AdminTabs from '@/components/AdminTabs/admin.tabs';
 
 const AddDataGuide: React.FC = () => {
   const router = useRouter();
-  const currentPath = usePathname();
 
   return (
     <>
       <Stack.Screen options={{ title: 'AddDataGuide!' }} />
       <SafeAreaView style={styles.container}>
         <Navbar />
-        <AdminTabs router={router}/>
+        <AdminTabs router={router} />
+        <View style={styles.contentContainer}>
+
+        </View>
       </SafeAreaView>
     </>
   );

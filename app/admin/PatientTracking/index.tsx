@@ -13,7 +13,6 @@ import AdminTabs from '@/components/AdminTabs/admin.tabs';
 
 const PatientTracking: React.FC = () => {
   const router = useRouter();
-  const currentPath = usePathname();
 
   return (
     <>
@@ -21,6 +20,10 @@ const PatientTracking: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <Navbar />
         <AdminTabs router={router} />
+
+        <View style={styles.contentContainer}>
+
+        </View>
       </SafeAreaView>
     </>
   );
