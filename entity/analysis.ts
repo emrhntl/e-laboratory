@@ -3,18 +3,18 @@ import { BaseEntity } from "./base.entity";
 
 export default class Analysis extends BaseEntity{
     userId: string;
-    guideId: string;
-    values: AnalysisValue;
+    values: AnalysisValue[];
+    createDate:string;
 
     constructor(
         analysisId: string,
         userId: string,
-        guideId: string,
-        values: AnalysisValue
+        values: AnalysisValue[],
+        createDate:string
     ) {
         super(analysisId);
         this.userId = userId;
-        this.guideId = guideId;
         this.values = values;
+        this.createDate = createDate;
     }
 }

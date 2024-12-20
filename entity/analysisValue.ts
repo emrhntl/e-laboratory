@@ -1,21 +1,15 @@
-import { AuditStatusEnum } from "@/enums/auditStatus.enum";
-import {BaseEntity} from "./base.entity";
 
 export default class AnalysisValue {
     auditName: string;
+    auditUnit:string;
     auditValue: string;
-    auditStatus: AuditStatusEnum; // tetkik e göre değişiklik durumu
-    userAuditStatus: AuditStatusEnum; // kullanıcının bir önceki tahliline göre değişiklik durumu
-
     constructor(
         auditName: string,
         auditValue: string,
-        auditStatus: AuditStatusEnum,
-        userAuditStatus: AuditStatusEnum
+        auditUnit:string,
     ) {
         this.auditName = auditName;
         this.auditValue = auditValue;
-        this.auditStatus = auditStatus;
-        this.userAuditStatus = userAuditStatus;
+        this.auditUnit=auditUnit
     }
 }

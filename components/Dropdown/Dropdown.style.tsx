@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
     dropdownContainer: {
         width: 120,
-        zIndex: 1000,
+        zIndex: 999,
     },
     dropdown: {
         flexDirection: 'row',

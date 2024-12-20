@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
 import styles from './index.style';
 import { Stack, usePathname, useRouter } from 'expo-router';
@@ -9,6 +9,9 @@ import Dropdown from '@/components/Dropdown/Dropdown';
 import { MassUnitEnum } from '@/enums/massUnit.enum';
 import { VolumeUnitEnum } from '@/enums/volumeUnit.enum';
 import AdminTabs from '@/components/AdminTabs/admin.tabs';
+import CustomSearchDropdown from '@/components/CustomSearchDropdown/CustomSearhDropdown';
+import Audit from '@/entity/audit';
+import { auditService } from '@/services/service.list';
 
 const CreateGuide: React.FC = () => {
 
@@ -25,6 +28,7 @@ const CreateGuide: React.FC = () => {
   const [maxValue, setMaxValue] = useState('');
   const [volumeUnit, setVolumeUnit] = useState<string>('');
   const [testList, setTestList] = useState<any[]>([]);
+  const [currentAuditList, setCurrentAuditList] = useState<Audit[]>([]);
 
   const generateNumberOptions = (start: number, end: number): string[] =>
     Array.from({ length: end - start + 1 }, (_, i) => (start + i).toString());
@@ -41,6 +45,21 @@ const CreateGuide: React.FC = () => {
       setValueRange('');
     }
   };
+
+  const fetchAuditList = async () => {
+    try {
+      const currentAuditList: Audit[] = await auditService.getAll();
+      console.log(currentAuditList)
+      setCurrentAuditList(currentAuditList);
+    } catch (err: any) {
+      console.error('Audit listesi alınırken hata oluştu:', err.message || err);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    fetchAuditList();
+  },[])
 
   const createGuide = () => {
     if (guideName && testName && (massUnit || volumeUnit)) {
@@ -61,7 +80,7 @@ const CreateGuide: React.FC = () => {
 
         <View style={styles.formContainer}>
           {/* <SearchBar value={searchText} onChange={setSearchText} iconName={"search-outline"} placeholder={"Kılavuz Arayın..."} /> */}
-          <ScrollView>
+          <View>
             <View>
               <Input
                 placeholder="Kılavuz Adı Giriniz..."
@@ -69,12 +88,7 @@ const CreateGuide: React.FC = () => {
                 onChangeText={setGuideName}
                 iconName="file-tray-full-outline"
               />
-              <Input
-                placeholder="Tetkik Adı Giriniz.."
-                value={testName}
-                onChangeText={setTestName}
-                iconName="document-text-outline"
-              />
+              <CustomSearchDropdown data={currentAuditList.map((audit) => { return {label:`${audit.name} | ${audit.unit}`,value:audit.name}})} placeholder='Tetkik Seçiniz' onSelect={() => {}} style={{width:'45%'}}  />
               <View style={styles.dropdownContainer}>
                 <Text style={styles.unitText}>Birim Seçiniz: </Text>
                 <Dropdown
@@ -131,7 +145,7 @@ const CreateGuide: React.FC = () => {
             <TouchableOpacity style={styles.createButton} onPress={createGuide}>
               <Text style={styles.buttonText}>Oluştur</Text>
             </TouchableOpacity>
-          </ScrollView>
+          </View>
         </View>
       </SafeAreaView>
     </>
