@@ -7,19 +7,13 @@ import Navbar from "@/components/Navbar/Navbar";
 import { Ionicons } from "@expo/vector-icons";
 import styles from './index.style';
 import { RoleEnum } from "@/enums/role.enum";
+import AddUserModal from "@/components/AddUserModal";
 
 const Profile: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
-    const [newAdmin, setNewAdmin] = useState({
-        name: "",
-        surname: "",
-        tckn: "",
-        birthday: "",
-        email: "",
-        password: "",
-    });
+    const [userType, setUserType] = useState("Admin");
     const router = useRouter();
 
     useEffect(() => {
@@ -43,40 +37,20 @@ const Profile: React.FC = () => {
         fetchUserData();
     }, []);
 
-    const handleAddAdmin = async () => {
-        if (
-            !newAdmin.name ||
-            !newAdmin.surname ||
-            !newAdmin.tckn ||
-            !newAdmin.birthday ||
-            !newAdmin.email ||
-            !newAdmin.password
-        ) {
-            Alert.alert("Hata", "Lütfen tüm alanları doldurun.");
-            return;
-        }
-
-        const newAdminId = `admin-${Date.now()}`;
-        const newAdminData = {
-            ...newAdmin,
-            id: newAdminId,
-            role: RoleEnum.ADMIN,
+    const handleAddUser = async (newUserData: any) => {
+        const newUserId = `${userType}-${Date.now()}`;
+        const newUserDataWithId = {
+            ...newUserData,
+            id: newUserId,
+            role: userType === "admin" ? RoleEnum.ADMIN : RoleEnum.USER,
         };
 
         try {
-            await setDoc(doc(db, "users", newAdminId), newAdminData);
-            Alert.alert("Başarılı", "Yeni admin başarıyla eklendi.");
-            setNewAdmin({
-                name: "",
-                surname: "",
-                tckn: "",
-                birthday: "",
-                email: "",
-                password: "",
-            }); // Formu sıfırla
+            await setDoc(doc(db, "users", newUserId), newUserDataWithId);
+            Alert.alert("Başarılı", `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} başarıyla eklendi.`);
         } catch (error) {
-            console.error("Admin eklenirken bir hata oluştu:", error);
-            Alert.alert("Hata", "Yeni admin eklenemedi.");
+            console.error(`${userType === "admin" ? "Admin" : "Hasta"} eklenirken bir hata oluştu:`, error);
+            Alert.alert("Hata", `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} eklenemedi.`);
         }
     };
 
@@ -116,78 +90,33 @@ const Profile: React.FC = () => {
                     {userData.role === RoleEnum.ADMIN && (
                         <TouchableOpacity
                             style={styles.adminButton}
-                            onPress={() => setModalVisible(true)}
+                            onPress={() => {
+                                setUserType("Admin");
+                                setModalVisible(true);
+                            }}
                         >
                             <Text style={styles.adminButtonText}>Yeni Admin Ekle</Text>
                         </TouchableOpacity>
                     )}
+                    {userData.role === RoleEnum.ADMIN && (
+                    <TouchableOpacity
+                        style={[styles.adminButton, {backgroundColor: "#5C98A4"}]}
+                        onPress={() => {
+                            setUserType("User");
+                            setModalVisible(true);
+                        }}
+                    >
+                        <Text style={styles.adminButtonText}>Yeni Hasta Ekle</Text>
+                    </TouchableOpacity>
+                )}
                 </View>
+                <AddUserModal
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    onSubmit={handleAddUser}
+                    userType={userType} // Pass the userType (admin or patient)
+                />
             </SafeAreaView>
-
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Ionicons name="close-outline" size={30} style={styles.closeIcon} onPress={() => setModalVisible(false)} />
-                        <Text style={styles.modalTitle}>Yeni Admin Bilgileri</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Ad"
-                            value={newAdmin.name}
-                            onChangeText={(text) => setNewAdmin({ ...newAdmin, name: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Soyad"
-                            value={newAdmin.surname}
-                            onChangeText={(text) => setNewAdmin({ ...newAdmin, surname: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="T.C Kimlik No"
-                            value={newAdmin.tckn}
-                            onChangeText={(text) => setNewAdmin({ ...newAdmin, tckn: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Doğum Tarihi (GG/AA/YYYY)"
-                            value={newAdmin.birthday}
-                            onChangeText={(text) => setNewAdmin({ ...newAdmin, birthday: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Email"
-                            value={newAdmin.email}
-                            onChangeText={(text) => setNewAdmin({ ...newAdmin, email: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Şifre"
-                            secureTextEntry
-                            value={newAdmin.password}
-                            onChangeText={(text) => setNewAdmin({ ...newAdmin, password: text })}
-                        />
-                        <View style={styles.modalActions}>
-                            <TouchableOpacity
-                                style={styles.closeButton}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.closeButtonText}>İptal</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.saveButton}
-                                onPress={handleAddAdmin}
-                            >
-                                <Text style={styles.saveButtonText}>Admin Ekle</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
         </>
     );
 }
