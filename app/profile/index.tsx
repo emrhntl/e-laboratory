@@ -8,6 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from './index.style';
 import { RoleEnum } from "@/enums/role.enum";
 import AddUserModal from "@/components/AddUserModal";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const Profile: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
@@ -38,21 +39,41 @@ const Profile: React.FC = () => {
     }, []);
 
     const handleAddUser = async (newUserData: any) => {
-        const newUserId = `${userType}-${Date.now()}`;
-        const newUserDataWithId = {
-            ...newUserData,
-            id: newUserId,
-            role: userType === "admin" ? RoleEnum.ADMIN : RoleEnum.USER,
-        };
-
-        try {
-            await setDoc(doc(db, "users", newUserId), newUserDataWithId);
-            Alert.alert("Başarılı", `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} başarıyla eklendi.`);
-        } catch (error) {
-            console.error(`${userType === "admin" ? "Admin" : "Hasta"} eklenirken bir hata oluştu:`, error);
-            Alert.alert("Hata", `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} eklenemedi.`);
-        }
-    };
+       const { email, password, name, surname, tckn, birthday } = newUserData;
+       
+           try {
+             // Firebase Authentication'da kullanıcı oluştur
+             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+             const user = userCredential.user;
+         
+             // Firestore'da kullanıcı bilgilerini kaydet
+             const userDocRef = doc(db, "users", user.uid);
+             await setDoc(userDocRef, {
+               userId: user.uid,
+               email: email,
+               name: name,
+               surname: surname,
+               tckn: tckn,
+               birthday: birthday,
+               password: password,
+               role: userType === "admin" ? RoleEnum.ADMIN : RoleEnum.USER, // Rol ayarı
+             });
+         
+             Alert.alert(
+               "Başarılı",
+               `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} başarıyla eklendi.`
+             );
+           } catch (error) {
+             console.error(
+               `${userType === "admin" ? "Admin" : "Hasta"} eklenirken bir hata oluştu:`,
+               error
+             );
+             Alert.alert(
+               "Hata",
+               `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} eklenemedi.`
+             );
+           }
+         };
 
     if (loading) {
         return (

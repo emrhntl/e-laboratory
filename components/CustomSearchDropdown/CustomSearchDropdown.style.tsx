@@ -10,7 +10,7 @@ const defaultStyles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 6,
+    borderRadius: 15,
     backgroundColor: '#fff',
     paddingHorizontal: 8,
     paddingVertical: 6,

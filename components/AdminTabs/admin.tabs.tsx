@@ -17,7 +17,7 @@ const AdminTabs: React.FC<AdminTabsProps> = ({ router }) => {
         ],
         [
             { label: 'Kılavuz Ekle', path: '/admin/CreateGuide', style: styles.btn3 },
-            { label: 'Kılavuza Veri Gir', path: '/admin/AddDataGuide', style: styles.btn4 },
+            { label: 'Tahlil Ekle', path: '/admin/CreateAnalysis', style: styles.btn4 },
         ],
     ];
 
