@@ -62,7 +62,7 @@ const Register = () => {
           />
           <Input
             placeholder="Soyadınız"
-            value={name}
+            value={surname}
             onChangeText={setSurname}
             iconName="person-outline"
           />

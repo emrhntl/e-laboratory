@@ -1,24 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
-import styles from './index.style';
+import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Alert, ActivityIndicator, TextInput } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import Navbar from '@/components/Navbar/Navbar';
-import AdminTabs from '@/components/AdminTabs/admin.tabs';
-import { RoleEnum } from '@/enums/role.enum';
+import { Ionicons } from '@expo/vector-icons';
+import styles from './index.style';
+
 import User from '@/entity/user';
+import { RoleEnum } from '@/enums/role.enum';
 import { auth, db } from '@/constants/firebaseConfig';
 import { collection, query, where, getDocs, getDoc, doc, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import Analysis from "@/entity/analysis";
+import Audit from '@/entity/audit';
+import AnalysisValue from "@/entity/analysisValue";
+import AuditService from '@/services/audit.service';
+import { analysisService } from '@/services/service.list';
+import { v4 as generateUUID } from 'uuid';
+
+import Navbar from '@/components/Navbar/Navbar';
+import AdminTabs from '@/components/AdminTabs/admin.tabs';
 import AddUserModal from '@/components/AddUserModal';
 import CustomSearhDropdown from '@/components/CustomSearchDropdown/CustomSearhDropdown';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import CustomButton from '@/components/CustomButton/CustomButton';
 
 const CreateAnalysis: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [userData, setUserData] = useState<any>(null);
+  const [audits, setAudits] = useState<Audit[]>([]);
+  const [selectedAudit, setSelectedAudit] = useState<Audit | null>(null);
+  const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [userType, setUserType] = useState("Admin");
+  const [analysisValues, setAnalysisValues] = useState<AnalysisValue[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -52,14 +66,28 @@ const CreateAnalysis: React.FC = () => {
             data.role
           );
         });
-        setUsers(usersList); // Store the list of users in state
+        setUsers(usersList);
       } catch (error) {
         console.error('Error fetching users:', error);
-      }finally {
+      } finally {
         setLoading(false);
       }
     };
 
+    const fetchAudits = async () => {
+      try {
+        setLoading(true);
+        const auditService = AuditService.getInstance();
+        const auditList = await auditService.getAll(); // Tüm tetkikleri Firestore'dan çek
+        setAudits(auditList);
+      } catch (error) {
+        console.error("Error fetching audits:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAudits();
     fetchData();
   }, []);
 
@@ -70,7 +98,7 @@ const CreateAnalysis: React.FC = () => {
       // Firebase Authentication'da kullanıcı oluştur
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-  
+
       // Firestore'da kullanıcı bilgilerini kaydet
       const userDocRef = doc(db, "users", user.uid);
       await setDoc(userDocRef, {
@@ -81,9 +109,9 @@ const CreateAnalysis: React.FC = () => {
         tckn: tckn,
         birthday: birthday,
         password: password,
-        role: userType === "admin" ? RoleEnum.ADMIN : RoleEnum.USER, // Rol ayarı
+        role: userType === "admin" ? RoleEnum.ADMIN : RoleEnum.USER, 
       });
-  
+
       Alert.alert(
         "Başarılı",
         `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} başarıyla eklendi.`
@@ -97,6 +125,71 @@ const CreateAnalysis: React.FC = () => {
         "Hata",
         `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} eklenemedi.`
       );
+    }
+  };
+
+  const handleAddValue = async () => {
+    if (!selectedAudit || inputValue.trim() === "") {
+      alert("Lütfen bir tetkik seçin ve değer girin.");
+      return;
+    }
+
+    // tahlil değeri ekliyoruz
+    const newAnalysisValue = new AnalysisValue(
+      selectedAudit.name,
+      inputValue,
+      selectedAudit.unit
+    );
+
+    setAnalysisValues((prevValues) => [...prevValues, newAnalysisValue]);
+
+    // inputu temizler
+    setInputValue("");
+
+    alert(`"${selectedAudit.name}" tetkiğine değer eklendi: ${inputValue}`);
+  };
+
+  const handleAddAnalysis = async () => {
+    if (!selectedUser) {
+      alert("Lütfen bir hasta seçin.");
+      return;
+    }
+
+
+
+
+    if (analysisValues.length === 0) {
+      alert("Lütfen en az bir tetkik değeri ekleyin.");
+      return;
+    }
+    console.log("hello")
+    try {
+      console.log("hello")
+
+      const newAnalysis = new Analysis(
+        generateUUID(),
+        selectedUser.id,
+        analysisValues,
+        new Date().toISOString()
+      );
+      console.log("hello2", newAnalysis);
+
+
+      const analysisData = newAnalysis.toJSON();
+      console.log("hello3", analysisData)
+
+      const id = await analysisService.create(analysisData);
+      console.log("hello3", id)
+
+      Alert.alert('Başarılı', `Tahlil başarıyla eklendi. ID: ${id}`);
+
+
+      setAnalysisValues([]);
+      setSelectedUser(null);
+      setSelectedAudit(null);
+    } catch (error) {
+      console.error("Error adding analysis:", error);
+      alert("Tahlil eklenirken bir hata oluştu.");
     }
   };
 
@@ -126,15 +219,16 @@ const CreateAnalysis: React.FC = () => {
           <View style={styles.content}>
             <View style={styles.buttonContainer}>
               {userData.role === RoleEnum.ADMIN && (
-                <TouchableOpacity
+                <CustomButton
                   style={styles.adminButton}
+                  textStyle={styles.adminButtonText}
                   onPress={() => {
                     setUserType("User");
                     setModalVisible(true);
                   }}
                 >
-                  <Text style={styles.adminButtonText}>Yeni Hasta Ekle</Text>
-                </TouchableOpacity>
+                  Yeni Hasta Ekle
+                </CustomButton>
               )}
             </View>
             <Text style={styles.title}>Tahlil Ekle</Text>
@@ -149,10 +243,50 @@ const CreateAnalysis: React.FC = () => {
                   setSelectedUser(selected || null);
                 }}
                 placeholder="Hasta seçiniz..."
+                style={styles.dropdown}
               />
-              <ScrollView>
+              <View style={styles.auditContainer}>
+                <CustomSearhDropdown
+                  data={audits.map((audit) => ({
+                    label: `${audit.name} (${audit.unit})`,
+                    value: audit.id,
+                  }))}
+                  onSelect={(item) => {
+                    const selected = audits.find((audit) => audit.id === item.value);
+                    setSelectedAudit(selected || null);
+                  }}
+                  placeholder="Tetkik seçiniz..."
+                  style={styles.dropdown}
+                />
 
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    value={inputValue}
+                    onChangeText={setInputValue}
+                    placeholder="Değer giriniz..."
+                  />
+                  <CustomButton onPress={handleAddValue} style={styles.buttonAddAudit} textStyle={{ color: '#444' }}>Değer Ekle</CustomButton>
+                </View>
+              </View>
+              <Text style={{ color: "#fff", fontSize: 17, marginVertical: 3 }}>Tetkik Değerleri</Text>
+              <ScrollView style={styles.scrollContainer}>
+                {analysisValues.map((value, index) => (
+                  <View key={index} style={styles.analysisItem}>
+                    <Text style={styles.analysisText}>
+                      {value.auditName} ({value.auditUnit}): {value.auditValue}
+                    </Text>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => console.log("silinmedi :D")}
+                      accessibilityLabel="Tetkik Sil"
+                    >
+                      <Ionicons name="trash-outline" size={24} color="#bbb" />
+                    </TouchableOpacity>
+                  </View>
+                ))}
               </ScrollView>
+              <CustomButton onPress={handleAddAnalysis} style={[styles.adminButton, { margin: "3%" }]} textStyle={[styles.adminButtonText, { fontSize: 18 }]}>Tahlil Ekle</CustomButton>
             </View>
           </View>
         </View>
@@ -160,7 +294,7 @@ const CreateAnalysis: React.FC = () => {
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
           onSubmit={handleAddUser}
-          userType={userType} // Pass the userType (admin or patient)
+          userType={userType}
         />
       </SafeAreaView>
     </>

@@ -26,6 +26,7 @@ const Login = () => {
         if (user != null) {
           switch (user.role) {
             case RoleEnum.USER:
+              router.navigate("/user/MyAnalysis")
               break;
             case RoleEnum.ADMIN:
               router.navigate("/admin/CreateGuide")
