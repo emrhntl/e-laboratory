@@ -109,7 +109,7 @@ const CreateAnalysis: React.FC = () => {
         tckn: tckn,
         birthday: birthday,
         password: password,
-        role: userType === "admin" ? RoleEnum.ADMIN : RoleEnum.USER, 
+        role: userType === "admin" ? RoleEnum.ADMIN : RoleEnum.USER,
       });
 
       Alert.alert(
@@ -155,16 +155,12 @@ const CreateAnalysis: React.FC = () => {
       return;
     }
 
-
-
-
     if (analysisValues.length === 0) {
       alert("Lütfen en az bir tetkik değeri ekleyin.");
       return;
     }
-    console.log("hello")
+
     try {
-      console.log("hello")
 
       const newAnalysis = new Analysis(
         generateUUID(),
@@ -172,14 +168,10 @@ const CreateAnalysis: React.FC = () => {
         analysisValues,
         new Date().toISOString()
       );
-      console.log("hello2", newAnalysis);
-
 
       const analysisData = newAnalysis.toJSON();
-      console.log("hello3", analysisData)
 
       const id = await analysisService.create(analysisData);
-      console.log("hello3", id)
 
       Alert.alert('Başarılı', `Tahlil başarıyla eklendi. ID: ${id}`);
 
