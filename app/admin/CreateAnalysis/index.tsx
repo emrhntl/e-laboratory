@@ -15,7 +15,7 @@ import AnalysisValue from "@/entity/analysisValue";
 import AuditService from '@/services/audit.service';
 import { analysisService } from '@/services/service.list';
 import { v4 as generateUUID } from 'uuid';
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 import Navbar from '@/components/Navbar/Navbar';
 import AdminTabs from '@/components/AdminTabs/admin.tabs';
 import AddUserModal from '@/components/AddUserModal';
@@ -33,6 +33,8 @@ const CreateAnalysis: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [userType, setUserType] = useState("Admin");
   const [analysisValues, setAnalysisValues] = useState<AnalysisValue[]>([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -166,7 +168,7 @@ const CreateAnalysis: React.FC = () => {
         generateUUID(),
         selectedUser.id,
         analysisValues,
-        new Date().toISOString()
+        selectedDate.toISOString()
       );
 
       const analysisData = newAnalysis.toJSON();
@@ -200,6 +202,13 @@ const CreateAnalysis: React.FC = () => {
       </SafeAreaView>
     );
   }
+
+  const handleDateChange = (event: any, date?: Date | undefined) => {
+    setShowDatePicker(false);
+    if (date) {
+      setSelectedDate(date);
+    }
+  };
 
   return (
     <>
@@ -237,6 +246,23 @@ const CreateAnalysis: React.FC = () => {
                 placeholder="Hasta seçiniz..."
                 style={styles.dropdown}
               />
+              <View style={styles.datePickerContainer}>
+                <CustomButton
+                  onPress={() => setShowDatePicker(true)}
+                  style={styles.dateButton}
+                  textStyle={styles.dateButtonText}
+                >
+                  Tarih Seç: {selectedDate.toLocaleDateString()}
+                </CustomButton>
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={selectedDate}
+                    mode="date"
+                    display="default"
+                    onChange={handleDateChange}
+                  />
+                )}
+              </View>
               <View style={styles.auditContainer}>
                 <CustomSearhDropdown
                   data={audits.map((audit) => ({
@@ -278,7 +304,7 @@ const CreateAnalysis: React.FC = () => {
                   </View>
                 ))}
               </ScrollView>
-              <CustomButton onPress={handleAddAnalysis} style={[styles.adminButton, { margin: "3%" }]} textStyle={[styles.adminButtonText, { fontSize: 18 }]}>Tahlil Ekle</CustomButton>
+              <CustomButton onPress={handleAddAnalysis} style={[styles.adminButton]} textStyle={[styles.adminButtonText, { fontSize: 18 }]}>Tahlil Ekle</CustomButton>
             </View>
           </View>
         </View>

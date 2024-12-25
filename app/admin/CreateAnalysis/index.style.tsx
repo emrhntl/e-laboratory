@@ -29,7 +29,7 @@ export default StyleSheet.create({
   },
   adminButton: {
     width: '35%',
-    padding: 15,
+    padding: 10,
     borderRadius: 15,
     backgroundColor: "#f5f5f5",
     alignItems: "center",
@@ -96,7 +96,7 @@ export default StyleSheet.create({
     justifyContent:"space-between",
     backgroundColor: '#f5f5f5',
     margin: '1%',
-    paddingVertical: '3%',
+    paddingVertical: '2%',
     paddingHorizontal: '5%',
     borderRadius:15,    
   },
@@ -109,9 +109,23 @@ export default StyleSheet.create({
     display:"flex",
     alignContent:"center",
     width:"80%",
-    height: '25%',
+    height: '20%',
   },
   deleteButton:{
 
+  },
+  datePickerContainer: {
+    width: "80%",
+    marginVertical: "1%",
+  },
+  dateButton: {
+    backgroundColor: '#f5f5f5',
+    padding: '5%',
+    borderRadius: 15,
+  },
+  dateButtonText: {
+    color: '#666',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
