@@ -1,9 +1,9 @@
 import AuditEntity from "./audit.entity";
-import {BaseEntity} from "./base.entity";
+import { BaseEntity } from "./base.entity";
 
 export default class Guide extends BaseEntity {
     name: string;
-    descricption: string;
+    description: string;
     auditList: AuditEntity[];
 
     constructor(
@@ -14,7 +14,7 @@ export default class Guide extends BaseEntity {
     ) {
         super(id);
         this.name = name;
-        this.descricption = description;
+        this.description = description;
         this.auditList = auditList;
     }
 }

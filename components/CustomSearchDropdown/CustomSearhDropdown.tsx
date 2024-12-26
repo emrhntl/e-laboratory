@@ -1,13 +1,13 @@
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
-    FlatList,
-    Platform,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-    ViewStyle
+  FlatList,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ViewStyle
 } from 'react-native';
 import defaultStyles from './CustomSearchDropdown.style';
 
@@ -22,6 +22,7 @@ interface DropdownProps {
   setValue?: (value: string) => void;
   placeholder?: string;
   style?: ViewStyle;
+  noResultMessage:string;
 }
 
 const CustomSearchDropdown: React.FC<DropdownProps> = ({
@@ -30,6 +31,7 @@ const CustomSearchDropdown: React.FC<DropdownProps> = ({
   setValue,
   placeholder = 'Select an item',
   style,
+  noResultMessage
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isVisible, setIsVisible] = useState(false);
@@ -119,7 +121,7 @@ const CustomSearchDropdown: React.FC<DropdownProps> = ({
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              <Text style={defaultStyles.noResults}>No results found</Text>
+              <Text style={defaultStyles.noResults}>{noResultMessage}</Text>
             }
             keyboardShouldPersistTaps="handled"
             nestedScrollEnabled={Platform.OS === 'android'}

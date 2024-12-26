@@ -2,25 +2,28 @@ class AuditValues {
     minAgeValue:string // db den ay olarak gelir
     maxAgeValue: string; // db den ay olarak gelir
 
-    standartDeviation: number; // geometric
-    avarage: number; // geometric
+    standartDeviation: string; // geometric
+    avarage: string; // geometric
 
-    minValue:number; // min max
-    maxValue:number; // min max
+    minValue:string; // min max
+    maxValue:string; // min max
 
-    ciMinValue:number; // confidence intervals
-    ciMaxValue:number; // confidence intervals
+    ciMinValue:string; // confidence intervals
+    ciMaxValue:string; // confidence intervals
+
+    ageType:string; // yıl mı ay mı
 
 
     constructor(
         minAgeValue: string,
         maxAgeValue: string,
-        standartDeviation: number,
-        avarage: number,
-        minValue: number,
-        maxValue:number,
-        ciMinValue:number,
-        ciMaxValue:number,
+        standartDeviation: string,
+        avarage: string,
+        minValue: string,
+        maxValue:string,
+        ciMinValue:string,
+        ciMaxValue:string,
+        ageType:string,
     ) {
         this.minAgeValue = minAgeValue;
         this.maxAgeValue = maxAgeValue;
@@ -30,6 +33,7 @@ class AuditValues {
         this.maxValue = maxValue;
         this.ciMinValue = ciMinValue;
         this.ciMaxValue = ciMaxValue;
+        this.ageType = ageType;
     }
 }
 

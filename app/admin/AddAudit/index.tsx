@@ -1,17 +1,17 @@
 // AddAudit.tsx
 
+import AddAuditCard from '@/components/AddAuditCard/add.audit.card';
 import AdminTabs from '@/components/AdminTabs/admin.tabs';
+import AuditCard from '@/components/AuditCard/AuditCard';
 import Navbar from '@/components/Navbar/Navbar';
+import Audit from '@/entity/audit';
+import { auditService } from '@/services/service.list';
 import { Stack, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, View, Text, ActivityIndicator, Alert, ScrollView } from 'react-native';
-import styles from './index.style';
-import AddAuditCard from '@/components/AddAuditCard/add.audit.card';
-import { auditService } from '@/services/service.list';
-import AuditCard from '@/components/AuditCard/AuditCard';
-import Audit from '@/entity/audit';
+import { ActivityIndicator, Alert, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import 'react-native-get-random-values';
 import { v4 as generateUUID } from 'uuid';
+import styles from './index.style';
 
 
 const AddAudit: React.FC = () => {
@@ -27,7 +27,6 @@ const AddAudit: React.FC = () => {
     try {
       setIsLoading(true);
       const currentAuditList: Audit[] = await auditService.getAll();
-      console.log(currentAuditList)
       setCurrentAuditList(currentAuditList);
     } catch (err: any) {
       console.error('Audit listesi alınırken hata oluştu:', err.message || err);

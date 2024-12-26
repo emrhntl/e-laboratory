@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, StyleProp, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { ScrollView, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 interface DropdownProps {
     options: string[];
@@ -8,6 +8,7 @@ interface DropdownProps {
     onValueChange: (value: string) => void;
     placeholder: string;
     style?: StyleProp<ViewStyle>;
+    disabled?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -16,32 +17,41 @@ const Dropdown: React.FC<DropdownProps> = ({
     onValueChange,
     placeholder,
     style,
+    disabled = false,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDropdown = () => {
-        setIsOpen(!isOpen);
+        if (!disabled) {
+            setIsOpen(!isOpen);
+        }
     };
 
     const handleSelect = (option: string) => {
-        onValueChange(option);
-        setIsOpen(false);
+        if (!disabled) {
+            onValueChange(option);
+            setIsOpen(false);
+        }
     };
 
     return (
         <View style={[styles.dropdownContainer, style, isOpen && { zIndex: 1000 }]}>
-            <TouchableOpacity style={styles.dropdown} onPress={toggleDropdown}>
-                <Text style={styles.selectedValue}>
+            <TouchableOpacity
+                style={[styles.dropdown, disabled && styles.disabledDropdown]}
+                onPress={toggleDropdown}
+                disabled={disabled}
+            >
+                <Text style={[styles.selectedValue, disabled && styles.disabledText]}>
                     {selectedValue || placeholder}
                 </Text>
                 <Ionicons
                     name={isOpen ? "chevron-up" : "chevron-down"}
                     size={20}
-                    color="#777"
+                    color={disabled ? '#aaa' : '#777'}
                 />
             </TouchableOpacity>
 
-            {isOpen && (
+            {isOpen && !disabled && (
                 <ScrollView style={styles.optionsContainer} nestedScrollEnabled={true}>
                     {options.map((item) => (
                         <TouchableOpacity
@@ -76,10 +86,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         backgroundColor: '#FFF',
     },
+    disabledDropdown: {
+        backgroundColor: '#f9f9f9',
+        borderColor: '#ddd',
+    },
     selectedValue: {
         fontSize: 14,
         color: '#555',
         flex: 1,
+    },
+    disabledText: {
+        color: '#aaa',
     },
     optionsContainer: {
         position: 'absolute',

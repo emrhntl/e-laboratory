@@ -1,55 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
-import styles from './index.style';
-import { Stack, usePathname, useRouter } from 'expo-router';
-import Navbar from '@/components/Navbar/Navbar';
 import Input from '@/components/Input/input';
-import Dropdown from '@/components/Dropdown/Dropdown';
+import Navbar from '@/components/Navbar/Navbar';
+import { Stack, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Alert, FlatList, Modal, SafeAreaView, Text, View } from 'react-native';
+import styles from './index.style';
 
-import { MassUnitEnum } from '@/enums/massUnit.enum';
-import { VolumeUnitEnum } from '@/enums/volumeUnit.enum';
 import AdminTabs from '@/components/AdminTabs/admin.tabs';
-import CustomSearchDropdown from '@/components/CustomSearchDropdown/CustomSearhDropdown';
+import AuditListItem from '@/components/AuditListItem/AuditListItem';
+import CustomButton from '@/components/CustomButton/CustomButton';
+import AddAuditModal from '@/components/modals/AddAudit/AddAuditModal';
 import Audit from '@/entity/audit';
-import { auditService } from '@/services/service.list';
+import AuditEntity from '@/entity/audit.entity';
+import AuditValues from '@/entity/audit.values';
+import Guide from '@/entity/guide';
+import { auditService, guideService } from '@/services/service.list';
+import { Ionicons } from '@expo/vector-icons';
+import { v4 as generateUUID } from 'uuid';
+
+
+type PopupType = 'addAudit' | 'showAllGuides' | 'showAudit' | null;
 
 const CreateGuide: React.FC = () => {
 
-
+  const [guide, setGuide] = useState<Guide>(new Guide("", "", "", []));
   const router = useRouter();
+  const [popupType, setPopupType] = useState<PopupType>(null);
+
+
+  const [selectedAudit, setSelectedAudit] = useState("");
 
 
   const [guideName, setGuideName] = useState('');
-  const [testName, setTestName] = useState('');
-  const [ageRange, setAgeRange] = useState('');
-  const [valueRange, setValueRange] = useState('');
-  const [massUnit, setMassUnit] = useState<string>('');
-  const [minValue, setMinValue] = useState('');
-  const [maxValue, setMaxValue] = useState('');
-  const [volumeUnit, setVolumeUnit] = useState<string>('');
-  const [testList, setTestList] = useState<any[]>([]);
   const [currentAuditList, setCurrentAuditList] = useState<Audit[]>([]);
 
-  const generateNumberOptions = (start: number, end: number): string[] =>
-    Array.from({ length: end - start + 1 }, (_, i) => (start + i).toString());
+  const closePopup = () => {
+    setSelectedAudit("");
+    setPopupType(null)
 
-  const massOptions = Object.values(MassUnitEnum);
-  const volumeOptions = Object.values(VolumeUnitEnum);
-
-  const numberOptions = generateNumberOptions(0, 25);
-
-  const addTest = () => {
-    if (ageRange && valueRange) {
-      setTestList([...testList, { ageRange, valueRange }]);
-      setAgeRange('');
-      setValueRange('');
-    }
-  };
+  }
 
   const fetchAuditList = async () => {
     try {
       const currentAuditList: Audit[] = await auditService.getAll();
-      console.log(currentAuditList)
       setCurrentAuditList(currentAuditList);
     } catch (err: any) {
       console.error('Audit listesi alınırken hata oluştu:', err.message || err);
@@ -59,16 +51,90 @@ const CreateGuide: React.FC = () => {
 
   useEffect(() => {
     fetchAuditList();
-  },[])
+  }, []);
+  const onAddAudit = (newAuditValues: AuditValues[], auditName: string) => {
 
-  const createGuide = () => {
-    if (guideName && testName && (massUnit || volumeUnit)) {
-      console.log('Guide Created:', { guideName, testName, massUnit, volumeUnit, testList });
-      // Backend API call for saving guide can be added here
-    } else {
-      alert('Lütfen tüm alanları doldurunuz!');
+    const audit = currentAuditList.find((audit) => audit.name === auditName);
+
+    if (!audit) {
+      console.warn("Belirtilen tetkik mevcut değil.");
+      Alert.alert("Hata", "Belirtilen tetkik mevcut değil.");
+      return;
+    }
+
+    const newAudit: AuditEntity = new AuditEntity(
+      audit.name,
+      audit.unit,
+      newAuditValues
+    );
+
+    if (!newAudit || !newAudit.auditName || !newAudit.unit) {
+      console.warn("Geçerli bir tetkik bilgisi girilmedi.");
+      Alert.alert("Hata", "Geçerli bir tetkik bilgisi girilmedi.");
+      return;
+    }
+
+    setGuide((prevGuide) => {
+      const isDuplicate = prevGuide.auditList.some(
+        (audit) => audit.auditName === newAudit.auditName
+      );
+
+      if (isDuplicate) {
+        console.warn("Bu tetkik zaten mevcut.");
+        Alert.alert("Uyarı", "Bu tetkik klavuzda zaten mevcut.");
+        return prevGuide;
+      }
+      const updatedAudits = [...prevGuide.auditList, newAudit];
+
+      return new Guide(
+        prevGuide.id,
+        prevGuide.name,
+        prevGuide.description,
+        updatedAudits
+      );
+    });
+
+  };
+
+
+  const saveGuide = async () => {
+    try {
+      if (!guideName.trim()) {
+        console.warn('Klavuz adı boş olamaz.');
+        Alert.alert('Hata', 'Klavuz adı boş olamaz.');
+        return;
+      }
+
+      if (guide.auditList.length === 0) {
+        console.warn('En az bir tetkik eklenmelidir.');
+        Alert.alert('Hata', 'En az bir tetkik eklenmelidir.');
+        return;
+      }
+
+      const newGuide = new Guide(
+        generateUUID(),
+        guideName.trim(),
+        guide.description,
+        guide.auditList
+      );
+
+      if (guide.id) {
+        await guideService.update(guide.id, newGuide.toJSON());
+        Alert.alert('Başarı', 'Klavuz başarıyla güncellendi.');
+      } else {
+        const id = await guideService.create(newGuide.toJSON());
+        setGuide((prevGuide) => new Guide(id, guideName, guide.description, prevGuide.auditList));
+        Alert.alert('Başarı', 'Klavuz başarıyla kaydedildi.');
+      }
+      setGuide(new Guide("", "", "", []));
+      setGuideName('');
+
+    } catch (error) {
+      console.error('Klavuz kaydedilirken hata oluştu:', error);
+      Alert.alert('Hata', 'Klavuz kaydedilirken bir hata oluştu.');
     }
   };
+
 
   return (
     <>
@@ -79,74 +145,65 @@ const CreateGuide: React.FC = () => {
         <AdminTabs router={router} />
 
         <View style={styles.formContainer}>
-          {/* <SearchBar value={searchText} onChange={setSearchText} iconName={"search-outline"} placeholder={"Kılavuz Arayın..."} /> */}
-          <View>
-            <View>
-              <Input
-                placeholder="Kılavuz Adı Giriniz..."
-                value={guideName}
-                onChangeText={setGuideName}
-                iconName="file-tray-full-outline"
-              />
-              <CustomSearchDropdown data={currentAuditList.map((audit) => { return {label:`${audit.name} | ${audit.unit}`,value:audit.name}})} placeholder='Tetkik Seçiniz' onSelect={() => {}} style={{width:'45%'}}  />
-              <View style={styles.dropdownContainer}>
-                <Text style={styles.unitText}>Birim Seçiniz: </Text>
-                <Dropdown
-                  options={massOptions}
-                  selectedValue={massUnit}
-                  onValueChange={setMassUnit}
-                  placeholder="Kütle"
-                />
-                <Text style={styles.separator}>/</Text>
-                <Dropdown
-                  options={volumeOptions}
-                  selectedValue={volumeUnit}
-                  onValueChange={setVolumeUnit}
-                  placeholder="Hacim"
-                />
-              </View>
-            </View>
-            <View style={styles.addContainer}>
-              <Input
-                placeholder="Yaş Aralığı Giriniz..."
-                value={ageRange}
-                onChangeText={setAgeRange}
-                iconName="calendar-outline"
-              />
-              <View style={styles.dropdownContainer}>
-                <Text style={styles.unitText}>Değer Aralığı Giriniz:</Text>
-                <Dropdown
-                  options={numberOptions}
-                  selectedValue={minValue}
-                  onValueChange={setMinValue}
-                  placeholder="min"
-                />
-                <Text style={styles.separator}>-</Text>
-                <Dropdown
-                  options={numberOptions}
-                  selectedValue={maxValue}
-                  onValueChange={setMaxValue}
-                  placeholder="max"
-                />
-              </View>
-              <TouchableOpacity style={styles.addButton} onPress={addTest}>
-                <Text style={styles.buttonText}>Ekle</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.listContainer}>
-              {testList.map((test, index) => (
-                <View key={index} style={styles.testItem}>
-                  <Text style={styles.testText}>
-                    Yaş: {test.ageRange}, Değer: {test.valueRange}
-                  </Text>
-                </View>
-              ))}
-            </View>
-            <TouchableOpacity style={styles.createButton} onPress={createGuide}>
-              <Text style={styles.buttonText}>Oluştur</Text>
-            </TouchableOpacity>
+          <Text style={styles.title}>Klavuz Oluştur</Text>
+          <Input
+            style={styles.input}
+            placeholder="Kılavuz Adı Giriniz..."
+            value={guideName}
+            onChangeText={setGuideName}
+            iconName="file-tray-full-outline"
+          />
+          <CustomButton onPress={(() => { setPopupType("addAudit") })} style={{ width: '85%' }} textStyle={{}}>
+            <Text>Klavuza tetkik ekle</Text>
+          </CustomButton>
+          <View style={styles.auditContainer}>
+            <Text style={[styles.title, { fontSize: 16, color: 'black' }]}>Klavuza Eklenen Tetkikler</Text>
+            <FlatList
+              data={guide.auditList}
+              keyExtractor={(item) => item.auditName}
+              renderItem={({ item }) => (
+                <AuditListItem auditName={item.auditName} />
+              )}
+              numColumns={2}
+            />
+          </View>
+
+          <View style={styles.bottomContainer}>
+            <CustomButton onPress={saveGuide} style={{ width: '85%' }} textStyle={{ color: 'black' }}>
+              <Text>Klavuzu Kaydet</Text>
+            </CustomButton>
           </View>
         </View>
+        <View style={styles.bottomContainer}>
+          <CustomButton onPress={() => setPopupType("showAllGuides")} style={{ width: '85%', backgroundColor: '#888' }} textStyle={{ color: '#fff' }}>
+            <Text>Kayıtlı Klavuz Listesini Gör</Text>
+          </CustomButton>
+        </View>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={popupType != null}
+          onRequestClose={closePopup}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.contentContainer} >
+              <View style={styles.closeContainer}>
+                <Ionicons name="close-outline" size={30} onPress={closePopup} />
+              </View>
+
+              {
+                popupType == 'addAudit' &&
+                <AddAuditModal
+                  onAddAudit={onAddAudit}
+                  auditList={currentAuditList.map((item) => (item.name))}
+                  selectedAudit={selectedAudit}
+                  onAuditChange={setSelectedAudit}
+                  closeModal={closePopup}
+                />
+              }
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     </>
   );

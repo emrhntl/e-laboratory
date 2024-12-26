@@ -1,30 +1,42 @@
-import React from 'react';
-import { View, TextInput, StyleSheet, TextInputProps } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { KeyboardTypeOptions, StyleProp, TextInput, TextInputProps, TextStyle, View, ViewStyle } from 'react-native';
 import styles from './input.style';
 
-interface InputProps extends TextInputProps {
-    placeholder: string;
-    value: string;
-    onChangeText: (text: string) => void;
-    iconName: any;
-    secureTextEntry?: boolean;
+interface InputProps extends Omit<TextInputProps, 'style' | 'keyboardType'> {
+  placeholder: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  iconName: any;
+  secureTextEntry?: boolean;
+  style?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<TextStyle>;
+  keyboardType?: KeyboardTypeOptions;
 }
 
-
-const Input: React.FC<InputProps> = ({ placeholder, value, onChangeText, iconName, secureTextEntry = false, ...rest }) => {
+const Input: React.FC<InputProps> = ({
+  placeholder,
+  value,
+  onChangeText,
+  iconName,
+  secureTextEntry = false,
+  style,
+  inputStyle,
+  keyboardType = 'default',
+  ...rest
+}) => {
   return (
-    <View style={styles.inputContainer}>
-        <Ionicons name={iconName} size={24} color="#aaa" style={styles.icon} />
+    <View style={[styles.inputContainer, style]}>
+      <Ionicons name={iconName} size={24} color="#aaa" style={styles.icon} />
       <TextInput
-        style={styles.input}
+        style={[styles.input, inputStyle]}
         placeholder={placeholder}
         placeholderTextColor="#aaa"
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
-        keyboardType={placeholder === "E-posta" ? "email-address" : "default"} // E-posta için klavye tipi
-        autoCapitalize="none" // E-postalarda büyük harf otomatik kapalı
+        keyboardType={keyboardType}
+        autoCapitalize="none"
         {...rest}
       />
     </View>
