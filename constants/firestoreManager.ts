@@ -128,4 +128,37 @@ export default class FirestoreManager<T extends DocumentData> {
             throw error;
         }
     }
+
+    async queryByFields(fields: string[], values: unknown[]): Promise<T[]> {
+        if (!fields?.length || !values?.length) {
+            throw new Error('Fields ve values boş olamaz.');
+        }
+    
+        if (fields.length !== values.length) {
+            throw new Error('Fields ve values dizilerinin uzunlukları eşit olmalıdır.');
+        }
+    
+        try {
+            const baseQuery = collection(db, this.collectionName);
+    
+            const combinedConditions = fields.map((field, index) => {
+                return where(field, "==", values[index]);
+            });
+    
+            const finalQuery = query(baseQuery, ...combinedConditions);
+    
+            const querySnapshot = await getDocs(finalQuery);
+    
+            return querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as unknown as T[];
+        } catch (error) {
+            console.error(
+                `[${this.collectionName}] Çoklu alan sorgusu sırasında hata oluştu:`,
+                error
+            );
+            throw new Error('Sorgu sırasında beklenmeyen bir hata oluştu.');
+        }
+    }
 }
