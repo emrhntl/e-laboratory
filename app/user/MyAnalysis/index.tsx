@@ -8,6 +8,8 @@ import Analysis from "@/entity/analysis";
 import { auth } from "@/constants/firebaseConfig";
 import ListAnalysisModal from "@/components/ListAnalysisModal";
 import DateFilter from "@/components/DateFilter";
+import AuthGuard from "@/app/utils/AuthGuard";
+import { RoleEnum } from "@/enums/role.enum";
 
 const MyAnalysis: React.FC = () => {
     const [analysis, setAnalysis] = useState<Analysis[]>([]);
@@ -18,7 +20,6 @@ const MyAnalysis: React.FC = () => {
     const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(null);
     const router = useRouter();
 
-    // Kullanıcı oturumunu kontrol ediyoruz
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {
@@ -28,14 +29,13 @@ const MyAnalysis: React.FC = () => {
                 setUserId(null);
                 setLoading(false);
                 Alert.alert('Hata', 'Lütfen oturum açın.');
-                router.replace('/login'); // Kullanıcı giriş sayfasına yönlendirilir
+                router.replace('/login');
             }
         });
 
-        return () => unsubscribe(); // Dinleyiciyi temizle
+        return () => unsubscribe();
     }, []);
 
-    // Tahlil verilerini getiriyor
     useEffect(() => {
         if (!userId) {
             return;
@@ -71,16 +71,13 @@ const MyAnalysis: React.FC = () => {
 
 
 
-    // Tahlil kartı
     const renderItem = ({ item }: { item: Analysis }) => {
-        // Tarih formatlama fonksiyonu
         const formatDate = (dateString: string) => {
-            const date = new Date(dateString);  // Tarihi Date objesine çevir
+            const date = new Date(dateString);  // Tarih
             const day = String(date.getDate()).padStart(2, '0'); // Gün
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Ay
             const year = date.getFullYear(); // Yıl
 
-            // İstenilen formatta (dd.mm.yyyy) döndür
             return `${day}.${month}.${year}`;
         };
 
@@ -114,7 +111,7 @@ const MyAnalysis: React.FC = () => {
     }
 
     return (
-        <>
+        <AuthGuard allowedRoles={[RoleEnum.USER]}>
             <Stack.Screen options={{ title: 'My Analysis' }} />
             <SafeAreaView style={styles.container}>
                 <Navbar />
@@ -135,7 +132,8 @@ const MyAnalysis: React.FC = () => {
                     selectedAnalysis={selectedAnalysis}
                 />
             </SafeAreaView>
-        </>
+
+        </AuthGuard>
     );
 }
 

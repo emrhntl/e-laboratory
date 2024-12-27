@@ -16,6 +16,8 @@ import Guide from '@/entity/guide';
 import { auditService, guideService } from '@/services/service.list';
 import { Ionicons } from '@expo/vector-icons';
 import { v4 as generateUUID } from 'uuid';
+import AuthGuard from '@/app/utils/AuthGuard';
+import { RoleEnum } from '@/enums/role.enum';
 
 
 type PopupType = 'addAudit' | 'showAllGuides' | 'showAudit' | null;
@@ -137,7 +139,7 @@ const CreateGuide: React.FC = () => {
 
 
   return (
-    <>
+    <AuthGuard allowedRoles={[RoleEnum.ADMIN]}>
       <Stack.Screen options={{ title: 'CreateGuide!' }} />
       <SafeAreaView style={styles.container}>
         <Navbar />
@@ -205,7 +207,7 @@ const CreateGuide: React.FC = () => {
           </View>
         </Modal>
       </SafeAreaView>
-    </>
+    </AuthGuard>
   );
 };
 

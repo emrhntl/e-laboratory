@@ -21,6 +21,7 @@ import AdminTabs from '@/components/AdminTabs/admin.tabs';
 import AddUserModal from '@/components/AddUserModal';
 import CustomSearhDropdown from '@/components/CustomSearchDropdown/CustomSearhDropdown';
 import CustomButton from '@/components/CustomButton/CustomButton';
+import AuthGuard from '@/app/utils/AuthGuard';
 
 const CreateAnalysis: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -211,7 +212,7 @@ const CreateAnalysis: React.FC = () => {
   };
 
   return (
-    <>
+    <AuthGuard allowedRoles={[RoleEnum.ADMIN]}>
       <Stack.Screen options={{ title: 'Create Analysis' }} />
       <SafeAreaView style={styles.container}>
         <Navbar />
@@ -244,8 +245,7 @@ const CreateAnalysis: React.FC = () => {
                   setSelectedUser(selected || null);
                 }}
                 placeholder="Hasta seçiniz..."
-                style={styles.dropdown}
-              />
+                style={styles.dropdown} noResultMessage={'Hasta Bulunamadı'} />
               <View style={styles.datePickerContainer}>
                 <CustomButton
                   onPress={() => setShowDatePicker(true)}
@@ -274,8 +274,7 @@ const CreateAnalysis: React.FC = () => {
                     setSelectedAudit(selected || null);
                   }}
                   placeholder="Tetkik seçiniz..."
-                  style={styles.dropdown}
-                />
+                  style={styles.dropdown} noResultMessage={'Tetkik bulunamadı'} />
 
                 <View style={styles.inputContainer}>
                   <TextInput
@@ -315,7 +314,7 @@ const CreateAnalysis: React.FC = () => {
           userType={userType}
         />
       </SafeAreaView>
-    </>
+    </AuthGuard>
   );
 };
 

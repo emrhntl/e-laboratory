@@ -1,45 +1,55 @@
 import React, { useState } from 'react';
-import { View, Text, Alert, SafeAreaView, Image, TouchableOpacity } from 'react-native';
-import { Link, Stack, useRouter } from 'expo-router';
+import { View, Text, Alert, SafeAreaView, Image } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/constants/firebaseConfig'; // Firebase konfigürasyon dosyasını içe aktar
+import { auth } from '@/constants/firebaseConfig'; // Firebase yapılandırması
 import styles from './index.style';
 import Input from '../../components/Input/input';
 import Button from '@/components/Button/button';
 import { userService } from '@/services/service.list';
 import User from '@/entity/user';
-import {RoleEnum} from '@/enums/role.enum';
+import { RoleEnum } from '@/enums/role.enum';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   const handleLogin = async () => {
     if (email === '' || password === '') {
       Alert.alert('Hata', 'Lütfen tüm alanları doldurun.');
-    } else {
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      const user: User | null = await userService.getById(userCredential.user.uid);
+
+      if (user && user.role) {
+        login(user.role as RoleEnum);
         
-        const user: User | null = await userService.getById(userCredential.user.uid);
-        if (user != null) {
-          switch (user.role) {
-            case RoleEnum.USER:
-              router.navigate("/user/MyAnalysis")
-              break;
-            case RoleEnum.ADMIN:
-              router.navigate("/admin/CreateGuide")
-              break;
-            default:
-              console.log("Kullanıcı Rolü Bulunamadı");
-              break;
-          }
+        switch (user.role) {
+          case RoleEnum.USER:
+              router.replace("/user/MyAnalysis")
+            break;
+          case RoleEnum.ADMIN:
+            router.replace("/admin/CreateGuide");
+            break;
+          default:
+            Alert.alert('Hata', 'Bilinmeyen kullanıcı rolü!');
+            router.replace('/login');
+            break;
         }
         Alert.alert('Başarılı', `Hoş geldiniz ${userCredential.user.email}!`);
-      } catch (error) {
-        console.log(error);
+      } else {
+        Alert.alert('Hata', 'Kullanıcı bilgisi bulunamadı.');
       }
+    } catch (error: any) {
+      console.error(error);
+      Alert.alert('Giriş Başarısız', error.message || 'Bilinmeyen bir hata oluştu.');
     }
   };
 
@@ -74,14 +84,7 @@ const Login = () => {
           <Text style={{ marginVertical: 8 }}>
             Hesabınız yok mu?
             <Text style={styles.linkText} onPress={() => router.push("/register")}>Kayıt Olun.</Text>
-
           </Text>
-          {/* <Button
-            title="Admin Girişi"
-            onPress={() => Alert.alert('Admin Girişi')}
-            style={styles.adminButton}
-            textStyle={styles.adminButtonText}
-          /> */}
         </View>
       </SafeAreaView>
     </>

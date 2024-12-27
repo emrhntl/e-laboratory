@@ -9,6 +9,7 @@ import styles from './index.style';
 import { RoleEnum } from "@/enums/role.enum";
 import AddUserModal from "@/components/AddUserModal";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import AuthGuard from "../utils/AuthGuard";
 
 const Profile: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
@@ -39,41 +40,39 @@ const Profile: React.FC = () => {
     }, []);
 
     const handleAddUser = async (newUserData: any) => {
-       const { email, password, name, surname, tckn, birthday } = newUserData;
-       
-           try {
-             // Firebase Authentication'da kullanıcı oluştur
-             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-             const user = userCredential.user;
-         
-             // Firestore'da kullanıcı bilgilerini kaydet
-             const userDocRef = doc(db, "users", user.uid);
-             await setDoc(userDocRef, {
-               userId: user.uid,
-               email: email,
-               name: name,
-               surname: surname,
-               tckn: tckn,
-               birthday: birthday,
-               password: password,
-               role: userType === "admin" ? RoleEnum.ADMIN : RoleEnum.USER, // Rol ayarı
-             });
-         
-             Alert.alert(
-               "Başarılı",
-               `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} başarıyla eklendi.`
-             );
-           } catch (error) {
-             console.error(
-               `${userType === "admin" ? "Admin" : "Hasta"} eklenirken bir hata oluştu:`,
-               error
-             );
-             Alert.alert(
-               "Hata",
-               `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} eklenemedi.`
-             );
-           }
-         };
+        const { email, password, name, surname, tckn, birthday } = newUserData;
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            const userDocRef = doc(db, "users", user.uid);
+            await setDoc(userDocRef, {
+                userId: user.uid,
+                email: email,
+                name: name,
+                surname: surname,
+                tckn: tckn,
+                birthday: birthday,
+                password: password,
+                role: userType === "admin" ? RoleEnum.ADMIN : RoleEnum.USER, // Rol ayarı
+            });
+
+            Alert.alert(
+                "Başarılı",
+                `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} başarıyla eklendi.`
+            );
+        } catch (error) {
+            console.error(
+                `${userType === "admin" ? "Admin" : "Hasta"} eklenirken bir hata oluştu:`,
+                error
+            );
+            Alert.alert(
+                "Hata",
+                `${userType === "admin" ? "Yeni admin" : "Yeni hasta"} eklenemedi.`
+            );
+        }
+    };
 
     if (loading) {
         return (
@@ -92,7 +91,7 @@ const Profile: React.FC = () => {
     }
 
     return (
-        <>
+        <AuthGuard allowedRoles={[RoleEnum.ADMIN,RoleEnum.USER]}>
             <Stack.Screen options={{ title: 'profile!' }} />
             <SafeAreaView style={styles.container}>
                 <Navbar />
@@ -120,25 +119,25 @@ const Profile: React.FC = () => {
                         </TouchableOpacity>
                     )}
                     {userData.role === RoleEnum.ADMIN && (
-                    <TouchableOpacity
-                        style={[styles.adminButton, {backgroundColor: "#5C98A4"}]}
-                        onPress={() => {
-                            setUserType("User");
-                            setModalVisible(true);
-                        }}
-                    >
-                        <Text style={styles.adminButtonText}>Yeni Hasta Ekle</Text>
-                    </TouchableOpacity>
-                )}
+                        <TouchableOpacity
+                            style={[styles.adminButton, { backgroundColor: "#5C98A4" }]}
+                            onPress={() => {
+                                setUserType("User");
+                                setModalVisible(true);
+                            }}
+                        >
+                            <Text style={styles.adminButtonText}>Yeni Hasta Ekle</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
                 <AddUserModal
                     modalVisible={modalVisible}
                     setModalVisible={setModalVisible}
                     onSubmit={handleAddUser}
-                    userType={userType} // Pass the userType (admin or patient)
+                    userType={userType}
                 />
             </SafeAreaView>
-        </>
+        </AuthGuard>
     );
 }
 

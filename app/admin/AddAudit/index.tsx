@@ -12,6 +12,8 @@ import { ActivityIndicator, Alert, SafeAreaView, ScrollView, Text, View } from '
 import 'react-native-get-random-values';
 import { v4 as generateUUID } from 'uuid';
 import styles from './index.style';
+import AuthGuard from '@/app/utils/AuthGuard';
+import { RoleEnum } from '@/enums/role.enum';
 
 
 const AddAudit: React.FC = () => {
@@ -94,7 +96,7 @@ const AddAudit: React.FC = () => {
 
 
   return (
-    <>
+    <AuthGuard allowedRoles={[RoleEnum.ADMIN]}>
       <Stack.Screen options={{ title: 'Add Audit' }} />
       <SafeAreaView style={styles.container}>
         <Navbar />
@@ -137,7 +139,7 @@ const AddAudit: React.FC = () => {
           </View>
         </View>
       </SafeAreaView>
-    </>
+    </AuthGuard>
   );
 };
 

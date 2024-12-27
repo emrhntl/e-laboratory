@@ -10,12 +10,14 @@ import Dropdown from '@/components/Dropdown/Dropdown';
 import { MassUnitEnum } from '@/enums/massUnit.enum';
 import { VolumeUnitEnum } from '@/enums/volumeUnit.enum';
 import AdminTabs from '@/components/AdminTabs/admin.tabs';
+import AuthGuard from '@/app/utils/AuthGuard';
+import { RoleEnum } from '@/enums/role.enum';
 
 const PatientTracking: React.FC = () => {
   const router = useRouter();
 
   return (
-    <>
+    <AuthGuard allowedRoles={[RoleEnum.ADMIN]} >
       <Stack.Screen options={{ title: 'PatientTracking!' }} />
       <SafeAreaView style={styles.container}>
         <Navbar />
@@ -25,7 +27,7 @@ const PatientTracking: React.FC = () => {
 
         </View>
       </SafeAreaView>
-    </>
+    </AuthGuard>
   );
 };
 
