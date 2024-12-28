@@ -22,7 +22,7 @@ interface DropdownProps {
   setValue?: (value: string) => void;
   placeholder?: string;
   style?: ViewStyle;
-  noResultMessage:string;
+  noResultMessage?:string;
 }
 
 const CustomSearchDropdown: React.FC<DropdownProps> = ({
