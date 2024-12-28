@@ -4,23 +4,18 @@ export default StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        width: '100%',
-        backgroundColor: '#f6f6f6',
-        borderRadius: 25,
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        marginBottom: 16,
+        padding: "0.8%",
         borderWidth: 1,
         borderColor: '#ccc',
-    },
-    input: {
-        height: 40,
-        fontSize: 16,
+        borderRadius: 5,
+        marginVertical: 10,
+      },
+      icon: {
+        marginRight: "2%",
+        marginLeft: "3%"
+      },
+      input: {
         flex: 1,
-        color: '#333',
-    },
-    icon: { 
-        marginRight: 10, 
-    }
-
+        fontSize: 16,
+      },
 });

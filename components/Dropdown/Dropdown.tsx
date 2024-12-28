@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderColor: '#ccc',
         paddingVertical: 8,
-        paddingHorizontal: 12,
+        paddingHorizontal: 10,
         backgroundColor: '#FFF',
     },
     disabledDropdown: {
