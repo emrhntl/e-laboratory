@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Modal, View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { Modal, View, Text, TextInput, TouchableOpacity, Alert, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from './index.style';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 interface AddUserModalProps {
     modalVisible: boolean;
@@ -15,10 +17,12 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ modalVisible, setModalVisib
         name: "",
         surname: "",
         tckn: "",
-        birthday: "",
+        birthday: new Date(),
         email: "",
         password: "",
     });
+
+    const [showPicker, setShowPicker] = useState(false);
 
     const handleInputChange = (field: string, value: string) => {
         setUserData({ ...userData, [field]: value });
@@ -36,9 +40,23 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ modalVisible, setModalVisib
             Alert.alert("Hata", "Lütfen tüm alanları doldurun.");
             return;
         }
+        const finalUserData = {
+            ...userData,
+            birthday: userData.birthday.toLocaleDateString('tr-TR'),
+        };
 
-        onSubmit(userData); // Send data to parent component
+        onSubmit(finalUserData); // Send data to parent component
         setModalVisible(false); // Close modal after submit
+    };
+
+    const onChange = (event: any, selectedDate?: Date) => {
+        setShowPicker(Platform.OS === 'ios');
+        if (selectedDate) {
+            setUserData({
+                ...userData,
+                birthday: selectedDate,
+            });
+        }
     };
 
     return (
@@ -73,12 +91,24 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ modalVisible, setModalVisib
                         value={userData.tckn}
                         onChangeText={(text) => handleInputChange("tckn", text)}
                     />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Doğum Tarihi (GG/AA/YYYY)"
-                        value={userData.birthday}
-                        onChangeText={(text) => handleInputChange("birthday", text)}
-                    />
+                    <TouchableOpacity
+                        onPress={() => setShowPicker(true)}
+                        style={styles.datePickerButton}
+                    >
+                        <Text style={styles.datePickerText}>
+                            Doğum Tarihi Seçiniz: {(userData.birthday).toLocaleDateString('tr-TR')}
+                        </Text>
+                    </TouchableOpacity>
+
+                    {showPicker && (
+                        <DateTimePicker
+                            value={userData.birthday}
+                            mode="date"
+                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                            onChange={onChange}
+                            maximumDate={new Date()}
+                        />
+                    )}
                     <TextInput
                         style={styles.input}
                         placeholder="Email"

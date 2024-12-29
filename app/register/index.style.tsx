@@ -24,7 +24,7 @@ export default StyleSheet.create({
         alignItems: 'center',
     },
     image: {
-        width :180,
+        width: 180,
         height: 180,
         resizeMode: 'cover'
     },
@@ -41,8 +41,23 @@ export default StyleSheet.create({
     },
     loginButton: {
         backgroundColor: '#5c98a4',
-      },
+    },
     loginButtonText: {
         color: '#fff',
-      }
+    },
+    datePickerButton: {
+        padding: 12,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        marginBottom: 10,
+        alignItems: 'center',
+        width: '98%',
+        backgroundColor: '#f9f9f9',
+    },
+
+    datePickerText: {
+        fontSize: 16,
+        color: '#333',
+    },
 });

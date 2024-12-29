@@ -122,5 +122,20 @@ export default StyleSheet.create({
         height: '8%',
         top: 10,
         right: 10,
-    }
+    },
+    datePickerButton: {
+        padding: 12,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        marginBottom: 10,
+        alignItems: 'center',
+        width: '98%',
+        backgroundColor: '#f9f9f9',
+      },
+      
+      datePickerText: {
+        fontSize: 16,
+        color: '#333',
+      },
 });

@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { ScrollView, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { FlatList, ScrollView, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 interface DropdownProps {
     options: string[];
     selectedValue: string;
-    onValueChange: (value: string) => void;
+    onValueChange: (value: any) => void;
     placeholder: string;
     style?: StyleProp<ViewStyle>;
     disabled?: boolean;
@@ -50,20 +50,23 @@ const Dropdown: React.FC<DropdownProps> = ({
                     color={disabled ? '#aaa' : '#777'}
                 />
             </TouchableOpacity>
-
             {isOpen && !disabled && (
-                <ScrollView style={styles.optionsContainer} nestedScrollEnabled={true}>
-                    {options.map((item) => (
+                <FlatList
+                    style={styles.optionsContainer}
+                    nestedScrollEnabled={true}
+                    data={options}
+                    keyExtractor={(item) => item.toString()}
+                    renderItem={({ item }) => (
                         <TouchableOpacity
-                            key={item}
                             style={styles.option}
                             onPress={() => handleSelect(item)}
                         >
                             <Text style={styles.optionText}>{item}</Text>
                         </TouchableOpacity>
-                    ))}
-                </ScrollView>
+                    )}
+                />
             )}
+
         </View>
     );
 };
@@ -113,7 +116,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 5,
-        maxHeight: 150,
         zIndex: 1000,
     },
     option: {
