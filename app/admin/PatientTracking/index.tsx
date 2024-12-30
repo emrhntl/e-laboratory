@@ -133,7 +133,13 @@ const PatientTracking: React.FC = () => {
             <ScrollView>
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                  <TouchableOpacity key={user.id} style={styles.userItem} onPress={() => router.navigate("/admin/ListUserAnalysis")}>
+                  <TouchableOpacity
+                    key={user.id}
+                    style={styles.userItem}
+                    onPress={() => router.push({
+                      pathname: "/admin/ListUserAnalysis",
+                      params: { user: JSON.stringify(user) }
+                    })}>
                     <Text style={styles.name}>{user.name} {user.surname} (
                       {selectedField === 'birthday' && user.birthday
                         ? formatDate(user.birthday)
