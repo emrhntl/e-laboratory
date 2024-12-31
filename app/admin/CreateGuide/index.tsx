@@ -101,7 +101,7 @@ const CreateGuide: React.FC = () => {
 
       if (isDuplicate) {
         console.warn("Bu tetkik zaten mevcut.");
-        Alert.alert("Uyarı", "Bu tetkik klavuzda zaten mevcut.");
+        Alert.alert("Uyarı", "Bu tetkik kılavuzda zaten mevcut.");
         return prevGuide;
       }
       const updatedAudits = [...prevGuide.auditList, newAudit];
@@ -120,8 +120,8 @@ const CreateGuide: React.FC = () => {
   const saveGuide = async () => {
     try {
       if (!guideName.trim()) {
-        console.warn('Klavuz adı boş olamaz.');
-        Alert.alert('Hata', 'Klavuz adı boş olamaz.');
+        console.warn('Kılavuz adı boş olamaz.');
+        Alert.alert('Hata', 'Kılavuz adı boş olamaz.');
         return;
       }
 
@@ -140,18 +140,18 @@ const CreateGuide: React.FC = () => {
 
       if (guide.id) {
         await guideService.update(guide.id, newGuide.toJSON());
-        Alert.alert('Başarı', 'Klavuz başarıyla güncellendi.');
+        Alert.alert('Başarı', 'Kılavuz başarıyla güncellendi.');
       } else {
         const id = await guideService.create(newGuide.toJSON());
         setGuide((prevGuide) => new Guide(id, guideName, guide.description, prevGuide.auditList));
-        Alert.alert('Başarı', 'Klavuz başarıyla kaydedildi.');
+        Alert.alert('Başarı', 'Kılavuz başarıyla kaydedildi.');
       }
       setGuide(new Guide("", "", "", []));
       setGuideName('');
 
     } catch (error) {
-      console.error('Klavuz kaydedilirken hata oluştu:', error);
-      Alert.alert('Hata', 'Klavuz kaydedilirken bir hata oluştu.');
+      console.error('Kılavuz kaydedilirken hata oluştu:', error);
+      Alert.alert('Hata', 'Kılavuz kaydedilirken bir hata oluştu.');
     }
   };
 
@@ -164,7 +164,7 @@ const CreateGuide: React.FC = () => {
         <AdminTabs router={router} />
 
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Klavuz Oluştur</Text>
+          <Text style={styles.title}>Kılavuz Oluştur</Text>
           <Input
             style={styles.input}
             placeholder="Kılavuz Adı Giriniz..."
@@ -173,10 +173,10 @@ const CreateGuide: React.FC = () => {
             iconName="file-tray-full-outline"
           />
           <CustomButton onPress={(() => { setPopupType("addAudit") })} style={{ width: '85%' }} textStyle={{}}>
-            <Text>Klavuza tetkik ekle</Text>
+            <Text>Kılavuza tetkik ekle</Text>
           </CustomButton>
           <View style={styles.auditContainer}>
-            <Text style={[styles.title, { fontSize: 16, color: 'black' }]}>Klavuza Eklenen Tetkikler</Text>
+            <Text style={[styles.title, { fontSize: 16, color: 'black' }]}>Kılavuza Eklenen Tetkikler</Text>
             <FlatList
               data={guide.auditList}
               keyExtractor={(item) => item.auditName}
@@ -189,7 +189,7 @@ const CreateGuide: React.FC = () => {
 
           <View style={styles.bottomContainer}>
             <CustomButton onPress={saveGuide} style={{ width: '85%' }} textStyle={{ color: 'black' }}>
-              <Text>Klavuzu Kaydet</Text>
+              <Text>Kılavuzu Kaydet</Text>
             </CustomButton>
           </View>
         </View>
