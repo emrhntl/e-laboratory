@@ -11,11 +11,13 @@ import AddUserModal from "@/components/AddUserModal";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import AuthGuard from "../utils/AuthGuard";
 import { useAuth } from "../context/AuthContext";
+import ChangePasswordModal from "@/components/modals/ChangePasswordModal";
 
 const Profile: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+    const [changePasswordModalVisible, setChangePasswordModalVisible] = useState(false);
     const [userType, setUserType] = useState("Admin");
     const router = useRouter();
     const { logout } = useAuth();
@@ -87,7 +89,7 @@ const Profile: React.FC = () => {
             Alert.alert("Hata", "Çıkış sırasında bir hata oluştu.");
         }
     };
-    
+
 
     if (loading) {
         return (
@@ -106,7 +108,7 @@ const Profile: React.FC = () => {
     }
 
     return (
-        <AuthGuard allowedRoles={[RoleEnum.ADMIN,RoleEnum.USER]}>
+        <AuthGuard allowedRoles={[RoleEnum.ADMIN, RoleEnum.USER]}>
             <Stack.Screen options={{ title: 'profile!' }} />
             <SafeAreaView style={styles.container}>
                 <Navbar />
@@ -122,6 +124,12 @@ const Profile: React.FC = () => {
                         <Text style={styles.infoLabel}>Doğum Tarihiniz: {userData.birthday}</Text>
                         <Text style={styles.infoLabel}>Email: {userData.email}</Text>
                     </View>
+                    <TouchableOpacity
+                        style={[styles.adminButton,{ backgroundColor: "#5C98A4" }]}
+                        onPress={() => setChangePasswordModalVisible(true)}
+                    >
+                        <Text style={styles.adminButtonText}>Şifremi Değiştir</Text>
+                    </TouchableOpacity>
                     {userData.role === RoleEnum.ADMIN && (
                         <TouchableOpacity
                             style={styles.adminButton}
@@ -144,18 +152,22 @@ const Profile: React.FC = () => {
                             <Text style={styles.adminButtonText}>Yeni Hasta Ekle</Text>
                         </TouchableOpacity>
                     )}
-                        <TouchableOpacity
-                            style={styles.adminButton}
-                            onPress={handleLogout}
-                        >
-                            <Text style={styles.adminButtonText}>Çıkış Yap</Text>
-                        </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.adminButton}
+                        onPress={handleLogout}
+                    >
+                        <Text style={styles.adminButtonText}>Çıkış Yap</Text>
+                    </TouchableOpacity>
                 </View>
                 <AddUserModal
                     modalVisible={modalVisible}
                     setModalVisible={setModalVisible}
                     onSubmit={handleAddUser}
                     userType={userType}
+                />
+                <ChangePasswordModal
+                    modalVisible={changePasswordModalVisible}
+                    setModalVisible={setChangePasswordModalVisible}
                 />
             </SafeAreaView>
         </AuthGuard>
