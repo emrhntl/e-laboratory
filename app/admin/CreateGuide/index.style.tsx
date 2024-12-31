@@ -65,5 +65,15 @@ export default StyleSheet.create({
     justifyContent:'center',
     marginTop:'3%',
     left:'3%'
-  }
+  },
+  guideListContainer: {
+    padding: 20,
+    width: '100%',
+    maxHeight: '80%',
+  },
+  guideItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
 });

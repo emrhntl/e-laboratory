@@ -18,6 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { v4 as generateUUID } from 'uuid';
 import AuthGuard from '@/app/utils/AuthGuard';
 import { RoleEnum } from '@/enums/role.enum';
+import ShowAllGuidesModal from '@/components/modals/ShowAllGuides/ShowAllGuides';
 
 
 type PopupType = 'addAudit' | 'showAllGuides' | 'showAudit' | null;
@@ -34,12 +35,29 @@ const CreateGuide: React.FC = () => {
 
   const [guideName, setGuideName] = useState('');
   const [currentAuditList, setCurrentAuditList] = useState<Audit[]>([]);
+  const [currentGuideList, setCurrentGuideList] = useState<Guide[]>([]);
 
   const closePopup = () => {
     setSelectedAudit("");
     setPopupType(null)
 
   }
+
+  const fetchGuides = async () => {
+    try {
+      const guides: Guide[] = await guideService.getAll(); // Kılavuzları al
+      setCurrentGuideList(guides); // Kılavuzları güncelle
+    } catch (err: any) {
+      console.error('Kılavuzlar alınırken hata oluştu:', err.message || err);
+    }
+  };
+
+  useEffect(() => {
+    if (popupType === 'showAllGuides') {
+      fetchGuides(); // Pop-up açıldığında kılavuzları çek
+    }
+  }, [popupType]); // popupType değiştiğinde çalışacak
+
 
   const fetchAuditList = async () => {
     try {
@@ -137,7 +155,6 @@ const CreateGuide: React.FC = () => {
     }
   };
 
-
   return (
     <AuthGuard allowedRoles={[RoleEnum.ADMIN]}>
       <Stack.Screen options={{ title: 'CreateGuide!' }} />
@@ -177,8 +194,8 @@ const CreateGuide: React.FC = () => {
           </View>
         </View>
         <View style={styles.bottomContainer}>
-          <CustomButton onPress={() => setPopupType("showAllGuides")} style={{ width: '85%', backgroundColor: '#888' }} textStyle={{ color: '#fff' }}>
-            <Text>Kayıtlı Klavuz Listesini Gör</Text>
+          <CustomButton onPress={() => setPopupType("showAllGuides")} style={{ width: '85%', backgroundColor: '#5C98A4' }} textStyle={{ color: '#fff' }}>
+            <Text style={{fontSize:16}}>Kayıtlı Kılavuz Listesini Gör</Text>
           </CustomButton>
         </View>
         <Modal
@@ -194,7 +211,7 @@ const CreateGuide: React.FC = () => {
               </View>
 
               {
-                popupType == 'addAudit' &&
+                popupType === 'addAudit' &&
                 <AddAuditModal
                   onAddAudit={onAddAudit}
                   auditList={currentAuditList.map((item) => (item.name))}
@@ -202,6 +219,15 @@ const CreateGuide: React.FC = () => {
                   onAuditChange={setSelectedAudit}
                   closeModal={closePopup}
                 />
+              }
+
+              {
+                popupType === 'showAllGuides' && (
+                  <ShowAllGuidesModal
+                    guides={currentGuideList}
+                    onClose={closePopup}
+                  />
+                )
               }
             </View>
           </View>
