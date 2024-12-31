@@ -130,6 +130,7 @@ const MyAnalysis: React.FC = () => {
                     visible={modalVisible}
                     onClose={() => setModalVisible(false)}
                     selectedAnalysis={selectedAnalysis}
+                    userId={userId}
                 />
             </SafeAreaView>
 
