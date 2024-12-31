@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, Text, Alert, Button, ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
-import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import AuthGuard from "@/app/utils/AuthGuard";
-import { RoleEnum } from '@/enums/role.enum';
-import styles from './index.style';
-import { useSearchParams } from "expo-router/build/hooks";
-import Analysis from "@/entity/analysis";
-import { analysisService } from "@/services/service.list";
-import AnalysisService from "@/services/analysis.service";
 import ListAnalysisModal from "@/components/ListAnalysisModal";
 import Navbar from "@/components/Navbar/Navbar";
+import Analysis from "@/entity/analysis";
+import { RoleEnum } from '@/enums/role.enum';
+import { analysisService } from "@/services/service.list";
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, FlatList, Modal, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import styles from './index.style';
+import AnalysisDetail from "@/components/AnalysisDetailModal";
+import User from "@/entity/user";
 
 const ListUserAnalysis: React.FC = () => {
     const { user } = useLocalSearchParams();
-    const parsedUser = JSON.parse(user as string);
+    const parsedUser:User = JSON.parse(user as string);
     const router = useRouter();
     const [analyses, setAnalyses] = useState<Analysis[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -25,15 +25,15 @@ const ListUserAnalysis: React.FC = () => {
             if (!parsedUser.id) {
                 return;
             }
+            
             try {
-                const analysisService = AnalysisService.getInstance();
-                const userAnalyses = await analysisService.queryByField('userId', parsedUser.id);  // userId'ye göre analizleri çek
-                setAnalyses(userAnalyses);  // Analizleri state'e aktar
+                const userAnalyses = await analysisService.queryByField('userId', parsedUser.id);
+                setAnalyses(userAnalyses);
             } catch (error) {
                 console.error("Analiz verisi alınırken hata:", error);
                 Alert.alert("Hata", "Analizler yüklenirken bir hata oluştu.");
             } finally {
-                setLoading(false);  // Yüklenme bitince state'i güncelle
+                setLoading(false);
             }
         };
 
@@ -86,11 +86,16 @@ const ListUserAnalysis: React.FC = () => {
                         )}
                     </View>
                 </View>
-                <ListAnalysisModal
+
+                <Modal
+                    transparent={true}
+                    animationType="fade"
                     visible={modalVisible}
-                    onClose={() => setModalVisible(false)}
-                    selectedAnalysis={selectedAnalysis}
-                />
+                    onRequestClose={() => { setModalVisible(false) }}
+                >
+                    <AnalysisDetail user={parsedUser} onClose={() => { setModalVisible(false) }} selectedAnalysis={selectedAnalysis} />
+
+                </Modal>
             </SafeAreaView>
         </AuthGuard>
     );

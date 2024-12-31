@@ -22,7 +22,8 @@ interface DropdownProps {
   setValue?: (value: string) => void;
   placeholder?: string;
   style?: ViewStyle;
-  noResultMessage?:string;
+  noResultMessage?: string;
+  disabled?: boolean; // Yeni disabled parametresi eklendi
 }
 
 const CustomSearchDropdown: React.FC<DropdownProps> = ({
@@ -31,7 +32,8 @@ const CustomSearchDropdown: React.FC<DropdownProps> = ({
   setValue,
   placeholder = 'Select an item',
   style,
-  noResultMessage
+  noResultMessage,
+  disabled = false // Default olarak false
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isVisible, setIsVisible] = useState(false);
@@ -48,6 +50,7 @@ const CustomSearchDropdown: React.FC<DropdownProps> = ({
   }, []);
 
   const toggleDropdown = useCallback(() => {
+    if (disabled) return; // Eğer disabled true ise hiçbir işlem yapılmaz
     if (isFocused) {
       setIsVisible(false);
       setIsFocused(false);
@@ -55,17 +58,19 @@ const CustomSearchDropdown: React.FC<DropdownProps> = ({
       setIsVisible(true);
       setIsFocused(true);
     }
-  }, [isFocused]);
+  }, [isFocused, disabled]);
 
   const handleFocus = useCallback(() => {
+    if (disabled) return; // Eğer disabled true ise odaklanma işlemi yapılmaz
     if (!isFocused) {
       setIsVisible(true);
       setIsFocused(true);
     }
-  }, [isFocused]);
+  }, [isFocused, disabled]);
 
   const handleSelect = useCallback(
     (item: DropdownItem) => {
+      if (disabled) return; // Eğer disabled true ise seçim yapılmaz
       onSelect(item);
       setSearchQuery(item.label);
       if (setValue) {
@@ -74,34 +79,41 @@ const CustomSearchDropdown: React.FC<DropdownProps> = ({
       setIsVisible(false);
       setIsFocused(false);
     },
-    [onSelect, setValue]
+    [onSelect, setValue, disabled]
   );
 
   return (
     <View style={[defaultStyles.container, style]}>
       <TouchableOpacity
         activeOpacity={1}
-        style={defaultStyles.inputWrapper}
+        style={[
+          defaultStyles.inputWrapper,
+          disabled && defaultStyles.disabledInputWrapper // Disabled stilini uygula
+        ]}
         onPress={toggleDropdown}
+        disabled={disabled} // TouchableOpacity devre dışı bırakılır
       >
         <TextInput
-          style={defaultStyles.searchInput}
+          style={[
+            defaultStyles.searchInput,
+            disabled && defaultStyles.disabledSearchInput // Disabled stilini uygula
+          ]}
           placeholder={placeholder}
           value={searchQuery}
           onChangeText={handleSearch}
-          editable
+          editable={!disabled} // TextInput devre dışı bırakılır
           onFocus={handleFocus}
           onBlur={() => setIsFocused(false)}
         />
         <MaterialIcons
           name={isVisible ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
           size={24}
-          color="#888"
+          color={disabled ? '#ccc' : '#888'} // İkon rengi disabled durumunda gri olur
           style={defaultStyles.icon}
         />
       </TouchableOpacity>
 
-      {isVisible && (
+      {isVisible && !disabled && (
         <View style={defaultStyles.dropdownContainer}>
           <FlatList
             data={filteredData}

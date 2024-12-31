@@ -10,6 +10,7 @@ import { RoleEnum } from "@/enums/role.enum";
 import AddUserModal from "@/components/AddUserModal";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import AuthGuard from "../utils/AuthGuard";
+import { useAuth } from "../context/AuthContext";
 
 const Profile: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
@@ -17,6 +18,8 @@ const Profile: React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [userType, setUserType] = useState("Admin");
     const router = useRouter();
+    const { logout } = useAuth();
+
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -74,6 +77,18 @@ const Profile: React.FC = () => {
         }
     };
 
+    const handleLogout = async () => {
+        try {
+            router.replace('/login');
+            await logout();
+            Alert.alert("Çıkış Yapıldı", "Başarıyla çıkış yaptınız.");
+        } catch (error) {
+            console.error("Çıkış sırasında hata oluştu:", error);
+            Alert.alert("Hata", "Çıkış sırasında bir hata oluştu.");
+        }
+    };
+    
+
     if (loading) {
         return (
             <SafeAreaView style={styles.loadingContainer}>
@@ -129,6 +144,12 @@ const Profile: React.FC = () => {
                             <Text style={styles.adminButtonText}>Yeni Hasta Ekle</Text>
                         </TouchableOpacity>
                     )}
+                        <TouchableOpacity
+                            style={styles.adminButton}
+                            onPress={handleLogout}
+                        >
+                            <Text style={styles.adminButtonText}>Çıkış Yap</Text>
+                        </TouchableOpacity>
                 </View>
                 <AddUserModal
                     modalVisible={modalVisible}

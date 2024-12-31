@@ -12,8 +12,8 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<{ role: RoleEnum | null } | null>(null);
 
-  const login = (role: RoleEnum) => setUser({ role });
-  const logout = () => setUser(null);
+  const login = (role: RoleEnum) => {setUser({ role })};
+  const logout = () => {setUser({role:null})};
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

@@ -62,6 +62,13 @@ const defaultStyles = StyleSheet.create({
     color: '#888',
     fontStyle: 'italic',
   },
+  disabledInputWrapper: {
+    backgroundColor: '#f9f9f9',
+    opacity: 0.6
+  },
+  disabledSearchInput: {
+    color: '#a9a9a9'
+  }
 });
 
 export default defaultStyles;

@@ -12,7 +12,6 @@ type AuthGuardProps = {
 export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
   const { user } = useAuth();
   const router = useRouter();
-
   if (!user || !allowedRoles.includes(user.role!)) {
     Alert.alert(
       'Erişim Engellendi',

@@ -29,7 +29,7 @@ const Login = () => {
       const user: User | null = await userService.getById(userCredential.user.uid);
 
       if (user && user.role) {
-        login(user.role as RoleEnum);
+        await login(user.role as RoleEnum);
         
         switch (user.role) {
           case RoleEnum.USER:

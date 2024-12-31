@@ -81,7 +81,7 @@ const CreateAnalysis: React.FC = () => {
       try {
         setLoading(true);
         const auditService = AuditService.getInstance();
-        const auditList = await auditService.getAll(); // Tüm tetkikleri Firestore'dan çek
+        const auditList = await auditService.getAll();
         setAudits(auditList);
       } catch (error) {
         console.error("Error fetching audits:", error);
@@ -98,11 +98,9 @@ const CreateAnalysis: React.FC = () => {
     const { email, password, name, surname, tckn, birthday } = newUserData;
 
     try {
-      // Firebase Authentication'da kullanıcı oluştur
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Firestore'da kullanıcı bilgilerini kaydet
       const userDocRef = doc(db, "users", user.uid);
       await setDoc(userDocRef, {
         userId: user.uid,
@@ -244,6 +242,7 @@ const CreateAnalysis: React.FC = () => {
                   const selected = users.find((user) => user.tckn === item.value);
                   setSelectedUser(selected || null);
                 }}
+                disabled={analysisValues.length != 0}
                 placeholder="Hasta seçiniz..."
                 style={styles.dropdown} noResultMessage={'Hasta Bulunamadı'} />
               <View style={styles.datePickerContainer}>
@@ -295,7 +294,7 @@ const CreateAnalysis: React.FC = () => {
                     </Text>
                     <TouchableOpacity
                       style={styles.deleteButton}
-                      onPress={() => console.log("silinmedi :D")}
+                      onPress={() => console.log("silinmedi")}
                       accessibilityLabel="Tetkik Sil"
                     >
                       <Ionicons name="trash-outline" size={24} color="#bbb" />
