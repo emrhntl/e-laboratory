@@ -42,6 +42,7 @@ const DateFilter: React.FC<DateFilterProps> = ({ onFilter }) => {
                             setShowStartDatePicker(false);
                             if (date) setStartDate(date);
                         }}
+                        maximumDate={new Date()}
                     />
                 )}
 
@@ -54,6 +55,7 @@ const DateFilter: React.FC<DateFilterProps> = ({ onFilter }) => {
                             setShowEndDatePicker(false);
                             if (date) setEndDate(date);
                         }}
+                        maximumDate={new Date()}
                     />
                 )}
             </View>

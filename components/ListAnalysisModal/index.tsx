@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import Analysis from '@/entity/analysis';
 import styles from './index.style';
@@ -21,90 +21,108 @@ interface CustomModalProps {
   userId: string | null;
 }
 
-const ListAnalysisModal: React.FC<CustomModalProps> = ({ visible, onClose, selectedAnalysis, userId }) => {
+const ListAnalysisModal: React.FC<CustomModalProps> = ({
+  visible,
+  onClose,
+  selectedAnalysis,
+  userId,
+}) => {
   const [userAnalysis, setUserAnalysis] = useState<Analysis[]>([]);
   const [latestDifferences, setLatestDifferences] = useState<Record<string, string>>({});
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return isNaN(date.getTime())
-      ? 'Geçersiz Tarih'
-      : `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+    if (isNaN(date.getTime())) return 'Geçersiz Tarih';
+    return `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(
+      2,
+      '0'
+    )}.${date.getFullYear()}`;
   };
 
   useEffect(() => {
     const fetchUserAnalysis = async () => {
       if (!userId) return;
+
       try {
         const userAnalysisList = await analysisService.queryByField('userId', userId);
-        const sortedAnalysis = userAnalysisList.sort(
+        userAnalysisList.sort(
           (a, b) => new Date(a.createDate).getTime() - new Date(b.createDate).getTime()
         );
-        setUserAnalysis(sortedAnalysis);
-        calculateDifferences(sortedAnalysis);
+        setUserAnalysis(userAnalysisList);
       } catch (error) {
         console.error('Analysis fetch error:', error);
       }
     };
-
     fetchUserAnalysis();
   }, [userId]);
 
-  const calculateDifferences = (analysisList: Analysis[]) => {
-    if (!selectedAnalysis) return;
-  
-    const differences: Record<string, string> = {};
-  
-    selectedAnalysis.values.forEach((currentValue) => {
-      const { auditName, auditValue } = currentValue;
-  
-      // Geçmiş analizlerde bu auditName için en son değeri bul
-      let lastPreviousValue: string | null = null;
-  
-      for (let i = analysisList.length - 1; i >= 0; i--) {
-        const pastAnalysis = analysisList[i];
-        if (new Date(pastAnalysis.createDate) < new Date(selectedAnalysis.createDate)) {
-          const matchedValue = pastAnalysis.values.find(
-            (prevValue) => prevValue.auditName === auditName
-          );
-          if (matchedValue) {
-            lastPreviousValue = matchedValue.auditValue;
+  const calculateDifferences = useCallback(
+    (analysisList: Analysis[], currentAnalysis: Analysis) => {
+      const differences: Record<string, string> = {};
+
+      if (!currentAnalysis || !currentAnalysis.createDate) {
+        setLatestDifferences({});
+        return;
+      }
+
+      const olderAnalyses = analysisList.filter(
+        (analysis) =>
+          new Date(analysis.createDate).getTime() <
+          new Date(currentAnalysis.createDate).getTime()
+      );
+
+      olderAnalyses.sort(
+        (a, b) => new Date(b.createDate).getTime() - new Date(a.createDate).getTime()
+      );
+
+      currentAnalysis.values.forEach((currentValue) => {
+        const { auditName, auditValue } = currentValue;
+        let foundOlderAnalysis = false;
+
+        for (const oldAnalysis of olderAnalyses) {
+          const valueIdx = oldAnalysis.values.findIndex((val) => val.auditName === auditName);
+          if (valueIdx !== -1) {
+            foundOlderAnalysis = true;
+            const current = parseFloat(auditValue);
+            const previous = parseFloat(oldAnalysis.values[valueIdx].auditValue);
+
+            if (!isNaN(current) && !isNaN(previous)) {
+              if (current > previous) {
+                differences[auditName] = 'up';
+              } else if (current < previous) {
+                differences[auditName] = 'down';
+              } else {
+                differences[auditName] = 'same';
+              }
+            } else {
+              console.warn(`Non-numeric auditValue for: ${auditName}`);
+              differences[auditName] = 'unknown';
+            }
+
             break;
           }
         }
-      }
-  
-      // Değerler karşılaştırılıyor
-      if (!lastPreviousValue) {
-        differences[auditName] = 'first'; // İlk analiz
-      } else {
-        const current = parseFloat(auditValue);
-        const previous = parseFloat(lastPreviousValue);
-  
-        if (!isNaN(current) && !isNaN(previous)) {
-          if (current > previous) {
-            differences[auditName] = 'up';
-          } else if (current < previous) {
-            differences[auditName] = 'down';
-          } else {
-            differences[auditName] = 'same';
-          }
-        } else {
-          console.warn(`Non-numeric auditValue for: ${auditName}`);
-          differences[auditName] = 'unknown';
+
+        if (!foundOlderAnalysis) {
+          differences[auditName] = 'first';
         }
-      }
-    });
-  
-    setLatestDifferences(differences);
-  };
-  
-  
-  
+      });
+
+      setLatestDifferences(differences);
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (userAnalysis.length && selectedAnalysis) {
+      calculateDifferences(userAnalysis, selectedAnalysis);
+    } else {
+      setLatestDifferences({});
+    }
+  }, [userAnalysis, selectedAnalysis, calculateDifferences]);
 
   const renderDifferenceIcon = (auditName: string) => {
     const status = latestDifferences[auditName];
-  
     switch (status) {
       case 'up':
         return <UpArrow />;
@@ -115,11 +133,10 @@ const ListAnalysisModal: React.FC<CustomModalProps> = ({ visible, onClose, selec
       case 'first':
         return <QuestionMark />;
       default:
-        console.warn(`Unhandled status for auditName: ${auditName}`);
+        // 'unknown' veya beklenmeyen
         return <QuestionMark />;
     }
   };
-  
 
   if (!visible || !selectedAnalysis || !userId) {
     return null;
@@ -130,7 +147,7 @@ const ListAnalysisModal: React.FC<CustomModalProps> = ({ visible, onClose, selec
       <TouchableOpacity style={styles.modalBackground} activeOpacity={1} onPress={onClose}>
         <View style={styles.modalContainer}>
           <Text style={styles.modalDate}>
-            Tarih: {selectedAnalysis?.createDate && formatDate(selectedAnalysis.createDate)}
+            Tarih: {selectedAnalysis.createDate && formatDate(selectedAnalysis.createDate)}
           </Text>
           <Text style={styles.modalTitle}>Tahlil Sonuçları</Text>
           <ScrollView style={styles.scrollView}>
@@ -139,7 +156,7 @@ const ListAnalysisModal: React.FC<CustomModalProps> = ({ visible, onClose, selec
               <Text style={styles.valueTitle}>Sonuç</Text>
               <Text style={styles.valueTitle}>Değişim</Text>
             </View>
-            {selectedAnalysis?.values.map((value, index) => (
+            {selectedAnalysis.values.map((value, index) => (
               <View key={index} style={styles.valueRow}>
                 <Text style={styles.valueName}>{value.auditName}:</Text>
                 <Text style={styles.valueData}>

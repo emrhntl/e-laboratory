@@ -44,6 +44,9 @@ const MyAnalysis: React.FC = () => {
         const fetchAnalysis = async () => {
             try {
                 const userAnalysis = await analysisService.queryByField('userId', userId);
+                userAnalysis.sort(
+                    (a, b) => new Date(a.createDate).getTime() - new Date(b.createDate).getTime()
+                  );
                 setAnalysis(userAnalysis);
                 setFilteredAnalysis(userAnalysis);
             } catch (error) {
@@ -73,13 +76,16 @@ const MyAnalysis: React.FC = () => {
 
     const renderItem = ({ item }: { item: Analysis }) => {
         const formatDate = (dateString: string) => {
-            const date = new Date(dateString);  // Tarih
-            const day = String(date.getDate()).padStart(2, '0'); // Gün
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Ay
-            const year = date.getFullYear(); // Yıl
-
-            return `${day}.${month}.${year}`;
+            const date = new Date(dateString); 
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear(); 
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+        
+            return `${day}.${month}.${year} ${hours}:${minutes}`;
         };
+        
 
         return (
             <View style={styles.card} >

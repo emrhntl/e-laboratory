@@ -259,6 +259,7 @@ const CreateAnalysis: React.FC = () => {
                     mode="date"
                     display="default"
                     onChange={handleDateChange}
+                    maximumDate={new Date()}
                   />
                 )}
               </View>
